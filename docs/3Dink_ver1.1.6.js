@@ -196,8 +196,7 @@
 				const ray = new webGlLib.Raycaster();
 				ray.setFromCamera( mouse, camera );
 				
-				// 外部から読み込んだオブジェクトも確認する場合はrecursive（第二引数）をtrueにする
-				return ray.intersectObjects( scene.children, true );
+				return ray.intersectObjects( scene.children );
 			},
 		
 		
@@ -289,32 +288,25 @@
 					// オブジェクトが発光していないか（各プロパティが 0 か）確認
 					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
 						
-						if( this.itsModel.link || this.itsModel.parent.link ){
+						if( this.itsModel.link && this.itsModel.link.url ) {
 							
-							// .objから読み込んだモデルの時
-							if( !this.itsModel.link )
-								this.itsModel = this.itsModel.parent;
+							if( this.itsModel.link.isShineOnMouse !== 'OFF' )
+								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
 							
-							if( this.itsModel.link && this.itsModel.link.url ) {
-								
-								if( this.itsModel.link.isShineOnMouse !== 'OFF' )
-									this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-								
-								style.cursor = 'pointer';
-								
-							}
+							style.cursor = 'pointer';
+
+						}
+						
+						else style.cursor = 'auto';
+						
+						// マウスの乗ってるモデルが変わったか
+						if( this.selectedModel !== this.itsModel ) {
 							
-							else style.cursor = 'auto';
+							// 以前カーソルを置いて光らせたモデルを元に戻す
+							selectedMatl.emissive = new webGlLib.Color( 0 );
 							
-							// マウスの乗ってるモデルが変わったか
-							if( this.selectedModel !== this.itsModel ) {
-								
-								// 以前カーソルを置いて光らせたモデルを元に戻す
-								selectedMatl.emissive = new webGlLib.Color( 0 );
-								
-								// 現在カーソルを置いているモデルを代入
-								this.selectedModel = this.itsModel;
-							}
+							// 現在カーソルを置いているモデルを代入
+							this.selectedModel = this.itsModel;
 						}
 					}
 				}
@@ -339,20 +331,13 @@
 		
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
-					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+		
+					if( this.itsModel.link && this.itsModel.link.url ) {
 						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
-						
-						if( this.itsModel.link.url ) {
-							
-							style.cursor = 'pointer';
-						}
-						
-						else style.cursor = 'auto';
+						style.cursor = 'pointer';
 					}
+					
+					else style.cursor = 'auto';
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
@@ -371,32 +356,25 @@
 				let selectedMatl = this.selectedModel.material;
 				
 				// 指と交差しているオブジェクトが有るか
-				if( this.itsModel && this.itsModel.link.isShineOnTouch !== 'OFF' ) {
-					
+				if( this.itsModel && this.itsModel.link && this.itsModel.link.isShineOnTouch !== 'OFF' ) {
+		
 					// オブジェクトが発光していない（各プロパティが 0 ）場合
 					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
 						
-						if( this.itsModel.link || this.itsModel.parent.link ){
+						if( this.itsModel.link.url ) {
+						
+							this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
 							
-							// .objから読み込んだモデルの時
-							if( !this.itsModel.link )
-								this.itsModel = this.itsModel.parent;
+						}
+						
+						// 指の乗ってるモデルが変わったか
+						if( this.selectedModel !== this.itsModel ) {
 							
-							if( this.itsModel.link.url ) {
+							// 以前指を置いて光らせたモデルを元に戻す
+							selectedMatl.emissive = new webGlLib.Color( 0 );
 							
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-								
-							}
-							
-							// 指の乗ってるモデルが変わったか
-							if( this.selectedModel !== this.itsModel ) {
-								
-								// 以前指を置いて光らせたモデルを元に戻す
-								selectedMatl.emissive = new webGlLib.Color( 0 );
-								
-								// 現在指を置いているモデルを代入
-								this.selectedModel = this.itsModel;
-							}
+							// 現在指を置いているモデルを代入
+							this.selectedModel = this.itsModel;
 						}
 					}
 				}
@@ -429,39 +407,32 @@
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.link && this.itsModel.link.url ) {
 						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
+						// オブジェクトが発光していないか（各プロパティが 0 か）確認
+						if( this.itsModel.link.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+						
+						style.cursor = 'pointer';
+						
+						this.addAnchorMouse( e, el, parent );
+					}
 					
-						if( this.itsModel.link.url ) {
-							
-							// オブジェクトが発光していないか（各プロパティが 0 か）確認
-							if( this.itsModel.link.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-							
-							style.cursor = 'pointer';
-							
-							this.addAnchorMouse( e, el, parent );
-						}
+					else {
+						style.cursor = 'auto';
 						
-						else {
-							style.cursor = 'auto';
-							
-							if(el !== null)
-								parent.removeChild(el);
-						}
+						if(el !== null)
+							parent.removeChild(el);
+					}
+					
+					// マウスの乗ってるモデルが一緒か
+					if( this.selectedModel !== this.itsModel ) {
 						
-						// マウスの乗ってるモデルが一緒か
-						if( this.selectedModel !== this.itsModel ) {
-							
-							// 以前カーソルを置いて光らせたモデルを元に戻す
-							selectedMatl.emissive = new webGlLib.Color( 0 );
-							
-							// 現在カーソルを置いているモデルを代入
-							this.selectedModel = this.itsModel;
-						}
+						// 以前カーソルを置いて光らせたモデルを元に戻す
+						selectedMatl.emissive = new webGlLib.Color( 0 );
+						
+						// 現在カーソルを置いているモデルを代入
+						this.selectedModel = this.itsModel;
 					}
 				}
 				
@@ -490,26 +461,20 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.link && this.itsModel.link.url ) {
 						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
-					
-						if( this.itsModel.link.url ) {
-							
-							style.cursor = 'pointer';
-							
-							this.addAnchorMouse( e, el, parent );
-						}
+						style.cursor = 'pointer';
 						
-						else {
-							style.cursor = 'auto';
-			
-							if(el !== null)
-								parent.removeChild(el);
-						}
+						this.addAnchorMouse( e, el, parent );
 					}
+					
+					else {
+						style.cursor = 'auto';
+		
+						if(el !== null)
+							parent.removeChild(el);
+					}
+					
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
@@ -536,38 +501,31 @@
 				const parent = this.renderer.domElement.parentNode;
 				
 				// 指と交差しているオブジェクトが有るか
-				if( this.itsModel ) {
+				if( this.itsModel && this.itsModel.link ) {
+				
+					if( this.itsModel.link.url ) {
+						
+						// オブジェクトが発光していない（各プロパティが 0 ）のとき
+						if( this.itsModel.link.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+						
+						this.addAnchorTouch( e, el, parent );
+					}
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
-						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
+					else {
+	
+						if( el !== null )
+							parent.removeChild(el);
+					}
 					
-						if( this.itsModel.link.url ) {
-							
-							// オブジェクトが発光していない（各プロパティが 0 ）のとき
-							if( this.itsModel.link.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-							
-							this.addAnchorTouch( e, el, parent );
-						}
+					// 指の乗ってるモデルが一緒か
+					if( this.selectedModel !== this.itsModel ) {
 						
-						else {
-		
-							if( el !== null )
-								parent.removeChild(el);
-						}
+						// 以前指を置いて光らせたモデルを元に戻す
+						selectedMatl.emissive = new webGlLib.Color( 0 );
 						
-						// 指の乗ってるモデルが一緒か
-						if( this.selectedModel !== this.itsModel ) {
-							
-							// 以前指を置いて光らせたモデルを元に戻す
-							selectedMatl.emissive = new webGlLib.Color( 0 );
-							
-							// 現在指を置いているモデルを代入
-							this.selectedModel = this.itsModel;
-						}
+						// 現在指を置いているモデルを代入
+						this.selectedModel = this.itsModel;
 					}
 				}
 				
@@ -597,22 +555,15 @@
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.link && this.itsModel.link.url ) {
 						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
-						
-						if( this.itsModel.link.url ) {
-							
-							this.addAnchorTouch( e, el, parent );
-						}
-						
-						else {
-			
-							if(el !== null)
-								parent.removeChild(el);
-						}
+						this.addAnchorTouch( e, el, parent );
+					}
+					
+					else {
+		
+						if(el !== null)
+							parent.removeChild(el);
 					}
 				}
 				
@@ -639,7 +590,6 @@
 					else this.itsModel = undefined;
 					this.moveCount++;
 					
-console.log(intersects[0].object);
 					// モードによって動的に変化する関数
 					process(e);
 //		console.timeEnd('t1');			
@@ -653,20 +603,8 @@ console.log(intersects[0].object);
 				
 				if( this.moveCount < 2 ) {
 					// 特定のモデルをクリックでリンク発動
-					if( this.itsModel ) {
-						
-						if( !this.itsModel.link ){
-							
-							// .objから読み込んだモデルの時
-							if( this.itsModel.parent.link )
-								this.itsModel = this.itsModel.parent;
-							
-							else return;
-						}
-						
-						if( this.itsModel.link.url ) {
+					if( this.itsModel && this.itsModel.link && this.itsModel.link.url ) {
 console.log(e.button);
-							
 							if( e.button === 0 || this.touchLen === 1 ){
 								
 								if( this.itsModel.link.isNewTab === 'ON' )
@@ -680,7 +618,6 @@ console.log(e.button);
 							
 							// *暫定* 右クリックでコンソールにリンク先を表示
 							else if( e.button === 2 ) console.log( this.itsModel.link.url );
-						}
 					}
 				}
 			},

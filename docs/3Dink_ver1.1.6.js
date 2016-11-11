@@ -196,7 +196,7 @@
 				const ray = new webGlLib.Raycaster();
 				ray.setFromCamera( mouse, camera );
 				
-				return ray.intersectObjects( scene.children );
+				return ray.intersectObjects( scene.children, true  );
 			},
 		
 		
@@ -285,6 +285,10 @@
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
 					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
+					
 					// オブジェクトが発光していないか（各プロパティが 0 か）確認
 					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
 						
@@ -331,7 +335,11 @@
 		
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
-		
+					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
+					
 					if( this.itsModel.link && this.itsModel.link.url ) {
 						
 						style.cursor = 'pointer';
@@ -356,25 +364,32 @@
 				let selectedMatl = this.selectedModel.material;
 				
 				// 指と交差しているオブジェクトが有るか
-				if( this.itsModel && this.itsModel.link && this.itsModel.link.isShineOnTouch !== 'OFF' ) {
-		
-					// オブジェクトが発光していない（各プロパティが 0 ）場合
-					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
+				if( this.itsModel ) {
+					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
+					
+					if( this.itsModel.link && this.itsModel.link.isShineOnTouch !== 'OFF') {
 						
-						if( this.itsModel.link.url ) {
-						
-							this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+						// オブジェクトが発光していない（各プロパティが 0 ）場合
+						if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
 							
-						}
-						
-						// 指の乗ってるモデルが変わったか
-						if( this.selectedModel !== this.itsModel ) {
+							if( this.itsModel.link.url ) {
 							
-							// 以前指を置いて光らせたモデルを元に戻す
-							selectedMatl.emissive = new webGlLib.Color( 0 );
+								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+								
+							}
 							
-							// 現在指を置いているモデルを代入
-							this.selectedModel = this.itsModel;
+							// 指の乗ってるモデルが変わったか
+							if( this.selectedModel !== this.itsModel ) {
+								
+								// 以前指を置いて光らせたモデルを元に戻す
+								selectedMatl.emissive = new webGlLib.Color( 0 );
+								
+								// 現在指を置いているモデルを代入
+								this.selectedModel = this.itsModel;
+							}
 						}
 					}
 				}
@@ -404,8 +419,16 @@
 				
 				const parent = this.renderer.domElement.parentNode;
 		
+				// .objから読み込んだモデルの時
+				if( !this.itsModel.link && this.itsModel.parent.link )
+					this.itsModel = this.itsModel.parent;
+				
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
+					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
 					
 					if( this.itsModel.link && this.itsModel.link.url ) {
 						
@@ -461,6 +484,10 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
+					
 					if( this.itsModel.link && this.itsModel.link.url ) {
 						
 						style.cursor = 'pointer';
@@ -501,9 +528,13 @@
 				const parent = this.renderer.domElement.parentNode;
 				
 				// 指と交差しているオブジェクトが有るか
-				if( this.itsModel && this.itsModel.link ) {
+				if( this.itsModel ) {
 				
-					if( this.itsModel.link.url ) {
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
+					
+					if( this.itsModel.link && this.itsModel.link.url ) {
 						
 						// オブジェクトが発光していない（各プロパティが 0 ）のとき
 						if( this.itsModel.link.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
@@ -554,6 +585,10 @@
 		
 				// マウスと交差しているオブジェクトが有るか
 				if( this.itsModel ) {
+					
+					// .objから読み込んだモデルの時
+					if( !this.itsModel.link && this.itsModel.parent.link )
+						this.itsModel = this.itsModel.parent;
 					
 					if( this.itsModel.link && this.itsModel.link.url ) {
 						

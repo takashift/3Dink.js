@@ -23,7 +23,7 @@
 } ( this, (function ( exports, global ) {
 "use strict";
 
-	const VERSION = '1.1.4';
+	const VERSION = '1.1.6';
 	console.log('3Dink.js Version', VERSION);
 
 	

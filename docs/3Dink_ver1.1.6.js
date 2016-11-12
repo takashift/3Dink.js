@@ -163,6 +163,7 @@
 		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnMouseCanvas: 'OFF',
 		
+		
 		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnTouchCanvas: 'ON',
 		

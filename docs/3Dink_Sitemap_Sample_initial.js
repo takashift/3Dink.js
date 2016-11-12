@@ -122,7 +122,7 @@ scene.add(directionalLight4);
 //地面（PlaneGeometry）の生成
 var plane = new THREE.Mesh( new THREE.PlaneGeometry(10000, 10000, 1, 1),
 				new THREE.MeshLambertMaterial({
-				side: THREE.DoubleSide,	color: "rgb(202,245,255)" })
+				side: THREE.DoubleSide,	color: "rgb(249,249,249)" })
 			);
 
 plane.rotation.x = Math.PI/2;
@@ -240,13 +240,69 @@ var about1 = Js3Dink.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.p
 scene.add(about1);
 Js3Dink.addURL(about1, "about3Dink.html");
 
+var kodawari = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/link_kodawari.png' );
+scene.add(kodawari);
+
 //Js3Dink.setCanvasSize(width, height);
 top1.link.setNewTab( 'ON' );
 console.log(1 ,top1.link.isNewTab);
-top1.link.setShineOnMouse('ON');
+const shineColor = 0x555555;
+top1.link.setShineColor( shineColor, 'ALL' );
+top1.link.setShineOnMouse('ON', 'ALL');
 //top1.link.setShineOnTouch('OFF', 'ALL');
 //Js3Dink.domEvent.isShineOnMouseCanvas = 'OFF'
+
+/*    // .objの読み込み
+    var ObjLoader = new THREE.OBJLoader();
+    ObjLoader.load("../Obj/Home.obj", function (object){
+        objmodel = object.clone();
+        objmodel.scale.set(10, 10, 10);            // 縮尺の初期化
+        objmodel.rotation.set(0, 0, 0);         // 角度の初期化
+        objmodel.position.set(0, 0, 0);         // 位置の初期化
+
+    // objをObject3Dで包む
+        obj = new THREE.Object3D();
+        obj.add(objmodel);
+
+        scene.add(obj);                     // sceneに追加
+    });        // obj mtl データは(.obj, .mtl. 初期処理, 読み込み時の処理, エラー処理)
+*/                                    // と指定する。
+
+				var mtlLoader = new THREE.MTLLoader();
+				// ../を使ってはいけない（戒め）
+				mtlLoader.setPath( 'Obj/' );
+				mtlLoader.load( 'Home.mtl', function( materials ) {
+
+					materials.preload();
+
+					var objLoader = new THREE.OBJLoader();
+					objLoader.setMaterials( materials );
+					// ../を使ってはいけない（戒め）
+					objLoader.setPath( 'Obj/' );
+					objLoader.load( 'Home.obj', function ( object ) {
+
+						object.position.set(0, 80, 0);
+						Js3Dink.addURL( object, "./" );
+						
+						object.type = 'mesh';
+						
+						obj = new THREE.Object3D();
+						obj.add( object );
+						
+						object.material = new THREE.MeshPhongMaterial({ emissive: 0 });
+						
+//						object.children[49]
+						
+						
+						scene.add( obj );
+						console.log(object );
+
+					} );
+
+				});
+
 Js3Dink.domEvent.addFnc(renderer, 'Fn', 'Fn');
+
 
 //top1.link.setShineOnMouse('fuga');
 console.log(top1.link.isShineOnMouse);

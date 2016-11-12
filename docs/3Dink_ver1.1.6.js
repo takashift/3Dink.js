@@ -293,21 +293,21 @@
 							
 							// .objから読み込んだモデルの時
 							if( !this.itsModel.link ) {
+								
 								this.itsModel = this.itsModel.parent;
+								
 								this.itsModel.isParent = true;
 							}
 							
-							if( this.itsModel.link && this.itsModel.link.url ) {
+							if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
 								
-								if( this.itsModel.link.isShineOnMouse !== 'OFF' )
-									
-									if( this.itsModel.isParent ) {
-										for( let i in this.itsModel.children ) {
-											this.itsModel.children[i].material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-										}
+								if( this.itsModel.isParent ) {
+									for( let i in this.itsModel.children ) {
+										this.itsModel.children[i].material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
 									}
-									else
-										this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+								}
+								else
+									this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
 								
 								style.cursor = 'pointer';
 								
@@ -386,7 +386,7 @@
 				let selectedMatl = this.selectedModel.material;
 				
 				// 指と交差しているオブジェクトが有るか
-				if( this.itsModel && this.itsModel.link.isShineOnTouch !== 'OFF' ) {
+				if( this.itsModel ) {
 					
 					// オブジェクトが発光していない（各プロパティが 0 ）場合
 					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
@@ -394,10 +394,14 @@
 						if( this.itsModel.link || this.itsModel.parent.link ){
 							
 							// .objから読み込んだモデルの時
-							if( !this.itsModel.link )
+							if( !this.itsModel.link ) {
+								
 								this.itsModel = this.itsModel.parent;
+								
+								this.itsModel.isParent = true;
+							}
 							
-							if( this.itsModel.link.url ) {
+							if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
 							
 								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
 								

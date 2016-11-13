@@ -268,7 +268,7 @@ top1.link.setShineOnMouse('ON', 'ALL');
     });        // obj mtl データは(.obj, .mtl. 初期処理, 読み込み時の処理, エラー処理)
 */                                    // と指定する。
 
-				var mtlLoader = new THREE.MTLLoader();
+/*				var mtlLoader = new THREE.MTLLoader();
 				// ../を使ってはいけない（戒め）
 				mtlLoader.setPath( 'Obj/' );
 				mtlLoader.load( 'Home.mtl', function( materials ) {
@@ -300,7 +300,7 @@ top1.link.setShineOnMouse('ON', 'ALL');
 					} );
 
 				});
-
+*/
 Js3Dink.domEvent.addFnc(renderer, 'Fn', 'Fn');
 
 

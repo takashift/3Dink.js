@@ -523,7 +523,7 @@
 							style.cursor = this.cursorOn3Dink;
 							
 							// アンカータグがあれば削除
-							if(el !== null)
+							if( el !== null )
 								parent.removeChild(el);
 						}
 						
@@ -539,7 +539,7 @@
 					}
 					
 					// アンカータグがあれば削除
-					else if(el !== null)
+					else if( el !== null )
 						parent.removeChild(el);
 				}
 				
@@ -553,7 +553,7 @@
 				}
 				
 				// アンカータグがあれば削除
-				else if(el !== null)
+				else if( el !== null )
 					parent.removeChild(el);
 			},
 		
@@ -588,7 +588,7 @@
 						else {
 							style.cursor = this.cursorOn3Dink;
 							
-							if(el !== null)
+							if( el !== null )
 								parent.removeChild(el);
 						}
 					}
@@ -689,7 +689,7 @@
 						
 						else {
 							
-							if(el !== null)
+							if( el !== null )
 								parent.removeChild(el);
 						}
 					}
@@ -706,8 +706,7 @@
 				
 				return function (e) {
 					
-					if( !this.rect )
-						this.rect = this.renderer.domElement.getBoundingClientRect();
+					this.rect = this.renderer.domElement.getBoundingClientRect();
 					
 					const pointer = getPoint(e);
 					
@@ -798,7 +797,6 @@
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
 						
 						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );
-						
 					}
 					
 					else {
@@ -913,7 +911,7 @@
 		
 		// モデル（直方体）を配置
 		// 直方体のサイズをBoxGeometry(x, y, z)で指定。
-		const geometry = new webGlLib.BoxGeometry(g_x, g_y, g_z);
+		const geometry = new webGlLib.BoxGeometry( g_x, g_y, g_z );
 		
 		if( txr !== undefined ) {
 			const texture = new webGlLib.TextureLoader().load( txr );
@@ -923,10 +921,10 @@
 		}
 		
 		//　モデルの座標を指定して追加
-		const model = new webGlLib.Mesh(geometry, material);
-		model.position.set(p_x, p_y, p_z);
+		const model = new webGlLib.Mesh( geometry, material );
+		model.position.set( p_x, p_y, p_z );
 		
-		// オブジェクトを返して代入させれば、参照（プロトタイプチェーン）は切れない
+		// オブジェクトを返して代入させれば、参照（プロトタイプチェーン）は切れない。
 		return model;
 	}
 

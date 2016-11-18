@@ -188,10 +188,10 @@
 		
 		
 		// 任意に変更可
-		cursorDefault: 'pointer',
+		cursorDefault: 'auto',
 		
 		
-		cursorOn3Dink: 'auto',
+		cursorOn3Dink: 'pointer',
 		
 		
 		// 発光を止める際に代入
@@ -369,7 +369,6 @@
 			function () {
 				
 				let selectedMatl = this.selectedModel.material;
-				
 				const style = renderer.domElement.style;
 				
 				// マウスと交差しているオブジェクトが有る場合
@@ -386,11 +385,12 @@
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 							
-							style.cursor = this.cursorDefault;
+							style.cursor = this.cursorOn3Dink;
 						}
 					}
 						
-					else style.cursor = this.cursorOn3Dink;
+					// モデルにリンクがない場合はカーソルを元に戻す
+					else style.cursor = this.cursorDefault;
 					
 					// マウスの乗ってるモデルが変わったら
 					if( this.selectedModel !== this.itsModel ) {
@@ -404,9 +404,9 @@
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else if( style.cursor !== this.cursorOn3Dink ){
+				else if( style.cursor !== this.cursorDefault ){
 					
-					style.cursor = this.cursorOn3Dink;
+					style.cursor = this.cursorDefault;
 					
 					this.resetShineModel( selectedMatl );
 				}
@@ -431,17 +431,19 @@
 						
 						if( this.itsModel.link.url ) {
 							
-							style.cursor = this.cursorDefault;
+							style.cursor = this.cursorOn3Dink;
 						}
 						
-						else style.cursor = this.cursorOn3Dink;
 					}
+					
+					// モデルにリンクがない場合はカーソルを元に戻す
+					else style.cursor = this.cursorDefault;
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
-				else if( style.cursor !== this.cursorOn3Dink ) {
+				else if( style.cursor !== this.cursorDefault ) {
 					
-					style.cursor = this.cursorOn3Dink;
+					style.cursor = this.cursorDefault;
 				}
 			},
 		
@@ -519,14 +521,14 @@
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 							
-							style.cursor = this.cursorDefault;
+							style.cursor = this.cursorOn3Dink;
 							
 							// アンカータグを挿入
 							this.addAnchorMouse( e, el, parent );
 						}
 						
 						else {
-							style.cursor = this.cursorOn3Dink;
+							style.cursor = this.cursorDefault;
 							
 							// アンカータグがあれば削除
 							if( el !== null )
@@ -550,9 +552,9 @@
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else　if( style.cursor !== this.cursorOn3Dink ) {
+				else　if( style.cursor !== this.cursorDefault ) {
 					
-					style.cursor = this.cursorOn3Dink;
+					style.cursor = this.cursorDefault;
 					
 					this.resetShineModel( selectedMatl );
 
@@ -586,13 +588,13 @@
 						
 						if( this.itsModel.link.url ) {
 							
-							style.cursor = this.cursorDefault;
+							style.cursor = this.cursorOn3Dink;
 							
 							this.addAnchorMouse( e, el, parent );
 						}
 						
 						else {
-							style.cursor = this.cursorOn3Dink;
+							style.cursor = this.cursorDefault;
 							
 							if( el !== null )
 								parent.removeChild(el);
@@ -601,9 +603,9 @@
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
-				else if( style.cursor !== this.cursorOn3Dink ) {
+				else if( style.cursor !== this.cursorDefault ) {
 					
-					style.cursor = this.cursorOn3Dink;
+					style.cursor = this.cursorDefault;
 					
 					if( el !== null )
 						parent.removeChild(el);
@@ -911,12 +913,16 @@
 	
 	
 	// 簡単に四角形を作成するための関数（テストのために作成）
-	function createBox( g_x, g_y, g_z, p_x, p_y, p_z, txr = undefined ){
+	function createBox( g_x, g_y, g_z, p_x, p_y, p_z, txr = undefined, arg_color = undefined ){
 		
 		// モデル（直方体）を配置
 		// 直方体のサイズをBoxGeometry(x, y, z)で指定。
 		const geometry = new webGlLib.BoxGeometry( g_x, g_y, g_z );
 		
+		// MeshPhongMaterial({color: hoge})で直方体のカラーを設定
+		if( arg_color !== undefined )
+			var material = new webGlLib.MeshPhongMaterial({ color: arg_color });
+
 		if( txr !== undefined ) {
 			const texture = new webGlLib.TextureLoader().load( txr );
 			texture.minFilter = webGlLib.LinearFilter;

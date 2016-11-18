@@ -301,7 +301,8 @@ top1.link.setShineOnMouse('ON', 'ALL');
 
 				});
 */
-Js3Dink.domEvent.addFnc(renderer, 'Fn', 'Fn');
+Js3Dink.setRendererObj( renderer, scene, camera );
+Js3Dink.domEvent.addFnc( 'Fn', 'Fn');
 
 
 //top1.link.setShineOnMouse('fuga');

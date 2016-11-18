@@ -1,6 +1,6 @@
 ﻿/**
- * 3Dんく（スリディンク）
- * "3Dんく" is a library that is aimed at adding every hyperlink to every 3D models.
+ * 3Dink（すりでぃんく）
+ * "3Dink" is a library that is aimed at adding every hyperlink to every 3D models.
  * 
  * @author 髭散化汰 / https://twitter.com/higechira
  * Copyright © 2014-2016 髭散化汰
@@ -41,11 +41,21 @@
 	let WIDTH;
 	let HEIGHT;
 	
-	
 	// domElementからの取得では無く直接canvasのサイズを指定する。
 	function setCanvasSize( arg_width, arg_height ) {
 		WIDTH  = arg_width;
 		HEIGHT = arg_height;
+	}
+	
+	// 名前が異なる場合は設定
+	let renderer;
+	let scene;
+	let camera;
+	
+	function setRendererObj( arg_renderer, arg_scene, arg_camera ) {
+		renderer = arg_renderer;
+		scene = arg_scene;
+		camera = arg_camera;
 	}
 	
 	
@@ -82,7 +92,7 @@
 		
 		// 関数で使うプロパティ
 		// 発光時モデルを入れるオブジェクト
-		emissiveObject: [],
+		emissiveObject: undefined,
 		
 		
 		// 各モデルの新規タブ設定を行う関数
@@ -144,10 +154,6 @@
 	// マウスやタッチ操作に関するオブジェクトを格納
 	const domEvent = {
 					
-		
-		renderer: undefined,
-		
-		
 		// カーソルの座標が動いた回数を計測
 		moveCount: 0,
 		
@@ -159,7 +165,7 @@
 		// 今カーソルと交差するモデルの前に交差したモデルを格納するオブジェクト
 		selectedModel: {
 			material: {
-				emissive: {}
+				emissive: undefined
 			}
 		},
 		
@@ -364,7 +370,7 @@
 				
 				let selectedMatl = this.selectedModel.material;
 				
-				const style = this.renderer.domElement.style;
+				const style = renderer.domElement.style;
 				
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -413,7 +419,7 @@
 		changeCursorFn:
 			function () {
 				
-				const style = this.renderer.domElement.style;
+				const style = renderer.domElement.style;
 				
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -492,12 +498,12 @@
 				
 				let selectedMatl = this.selectedModel.material;
 				
-				const style = this.renderer.domElement.style;
+				const style = renderer.domElement.style;
 				
 				// renderer(canvas)の親タグにあるアンカータグを取得
 				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
+				const parent = renderer.domElement.parentNode;
 				
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -564,11 +570,11 @@
 		changeCursorA:
 			function (e) {
 				
-				const style = this.renderer.domElement.style;
+				const style = renderer.domElement.style;
 				
 				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
+				const parent = renderer.domElement.parentNode;
 				
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -615,7 +621,7 @@
 				
 				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
+				const parent = renderer.domElement.parentNode;
 				
 				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -672,7 +678,7 @@
 				
 				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
+				const parent = renderer.domElement.parentNode;
 				
 				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
@@ -706,7 +712,7 @@
 				
 				return function (e) {
 					
-					this.rect = this.renderer.domElement.getBoundingClientRect();
+					this.rect = renderer.domElement.getBoundingClientRect();
 					
 					const pointer = getPoint(e);
 					
@@ -767,9 +773,7 @@
 		//　ハイパーリンクEvent追加関数
 		// 第一引数：リンク実装方法(関数モードとAタグモード) "Fn"(default) or "A"
 		addFnc:
-			function ( renderer, is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
-				
-				this.renderer = renderer;
+			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
 				
 				if( !WIDTH ){
 					WIDTH = renderer.domElement.style.width;
@@ -940,6 +944,7 @@
 	// function
 	exports.setWrapperLib = setWrapperLib;
 	exports.setCanvasSize = setCanvasSize;
+	exports.setRendererObj = setRendererObj;
 	exports.addURL = addURL;
 	exports.domEvent = domEvent;
 	exports.createBox = createBox;

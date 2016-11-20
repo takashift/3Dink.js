@@ -5,3 +5,6 @@ The library creating 3D hyperlink.
 It can be clicked like the text link, open the context menu and operate.
 
 Let's try create 3Dink.
+
+3Dink.js Introduction（日本語）
+https://speakerdeck.com/takashift/3dink-dot-js-introduction

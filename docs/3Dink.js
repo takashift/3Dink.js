@@ -817,7 +817,7 @@
 					//　ピッキング処理（クリックしてリンクを作動）
 					renderer.domElement.addEventListener( 'mouseup', this.loadPageLink.bind(this), false );	
 					
-					console.log( 'Mouse: Fuction Mode by 3Dink.js' );
+					console.log( 'Mouse: <Fuction> Mode by 3Dink.js' );
 				}
 				
 				
@@ -846,7 +846,7 @@
 					//　ピッキング処理（クリックしてリンクを作動）
 					renderer.domElement.addEventListener( 'touchend', this.loadPageLink.bind(this), false );	
 					
-					console.log( 'Touch: Fuction Mode by 3Dink.js' );
+					console.log( 'Touch: <Fuction> Mode by 3Dink.js' );
 				}
 				
 				
@@ -878,7 +878,7 @@
 						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
 					}
 					
-					console.log( 'Mouse: Anchor Tag Mode by 3Dink.js' );
+					console.log( 'Mouse: <Anchor Tag> Mode by 3Dink.js' );
 				}
 					
 				// タッチ操作での処理
@@ -902,7 +902,7 @@
 						renderer.domElement.addEventListener( 'touchend', function (){}, false );		
 					}
 					
-					console.log( 'Touch: Anchor Tag Mode by 3Dink.js' );
+					console.log( 'Touch: <Anchor Tag> Mode by 3Dink.js' );
 				}
 			},
 		
@@ -923,7 +923,7 @@
 		if( arg_color !== undefined )
 			var material = new webGlLib.MeshPhongMaterial({ color: arg_color });
 
-		if( txr !== undefined ) {
+		if( txr ) {
 			const texture = new webGlLib.TextureLoader().load( txr );
 			texture.minFilter = webGlLib.LinearFilter;
 			

@@ -892,7 +892,7 @@
 					
 					console.log( 'Mouse: <Anchor Tag> Mode by 3Dink.js' );
 				}
-					
+				
 				// タッチ操作での処理
 				if( is_Hyperlink_mode_touch === 'A' ) {
 					

@@ -256,8 +256,9 @@ var about1 = Js3Dink.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.p
 scene.add(about1);
 Js3Dink.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
 
-var kodawari = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
-scene.add(kodawari);
+var site = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
+Js3Dink.addURL(site, "http://3dink.webcrow.jp/");
+scene.add(site);
 
 //Js3Dink.setCanvasSize(width, height);
 top1.link.setNewTab( 'ON' );

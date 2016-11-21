@@ -1,4 +1,20 @@
-﻿//3Dんく（スリディンク）sample Copyright 髭散化汰.　All rights reserved.
+﻿/**
+ * 3Dink（すりでぃんく） sample
+ * 
+ * Copyright 2014 髭散化汰
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 onload = function(){
 document.getElementById('canvas').appendChild(renderer.domElement);
@@ -238,9 +254,9 @@ scene.add(top1);
 
 var about1 = Js3Dink.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
 scene.add(about1);
-Js3Dink.addURL(about1, "about3Dink.html");
+Js3Dink.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
 
-var kodawari = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/link_kodawari.png' );
+var kodawari = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
 scene.add(kodawari);
 
 //Js3Dink.setCanvasSize(width, height);

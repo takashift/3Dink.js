@@ -1,5 +1,12 @@
 ﻿/**
  * Controls3DinkFieldMaps is：
+ *  
+ * @author 髭散化汰 / https://twitter.com/higechira
+ *  
+ * Copyright © 2014-2016 髭散化汰
+ *  
+ * @license Apache-2.0
+ *  
  * 次のlicenseの下、Three.js(r68)　の　OrbitControls.js の一部を再利用している。
  * 改変有りなど、日本語でコメントが書かれた部分は 髭散化汰 によって変更された箇所である。
  * @author qiao / https://github.com/qiao
@@ -14,7 +21,7 @@
 //------------------------------------------------------------
 // 以下は地形図型サイトマップ向けに画面の操作を定義するコンストラクタである。
 //
-// 飽くまでUIを提供するものであるため、他の関数や独自のUIを用いても良い。
+// 飽くまでUIを提供するものであるため、他の関数、ライブラリや独自のUIを用いても良い。
 //------------------------------------------------------------
 
 Controls3DinkFieldMaps = function ( object, domElement ) {

@@ -1,9 +1,21 @@
 ﻿/**
- * 3Dんく（スリディンク）
- * "3Dんく" is a library that is aimed at adding every hyperlink to every 3D models.
+ * 3Dink（すりでぃんく）
+ * "3Dink" is a library that is aimed at adding every hyperlink to every 3D models.
  * 
  * @author 髭散化汰 / https://twitter.com/higechira
  * Copyright © 2014-2016 髭散化汰
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -23,16 +35,16 @@
 } ( this, (function ( exports, global ) {
 "use strict";
 
-	const VERSION = '1.1.6';
+	const VERSION = '1.1.7';
 	console.log('3Dink.js Version', VERSION);
-
 	
-	// Three.js併用時読み込み
+	
+	// Three.js自動読み込み
 	if( THREE )
 		var webGlLib = THREE;
 	
 	
-	// Three.js互換のライブラリを利用する場合に設定。
+	// Three.js互換のライブラリを利用する場合に設定
 	function setWrapperLib( name ) {
 		webGlLib = name;
 	}
@@ -41,41 +53,61 @@
 	let WIDTH;
 	let HEIGHT;
 	
-	
 	// domElementからの取得では無く直接canvasのサイズを指定する。
-	function setCanvasSize(arg_width, arg_height) {
-		WIDTH = arg_width;
+	function setCanvasSize( arg_width, arg_height ) {
+		WIDTH  = arg_width;
 		HEIGHT = arg_height;
+	}
+	
+	// 名前が異なる場合は設定
+	let renderer;
+	let scene;
+	let camera;
+	
+	function setRendererObj( arg_renderer, arg_scene, arg_camera ) {
+		renderer = arg_renderer;
+		scene = arg_scene;
+		camera = arg_camera;
 	}
 	
 	
 	// モデルにURLを付与し、ハイパーリンクとする
-	function addURL( model, arg_url ){
+	function addURL( model, arg_url ) {
+		
 		if( !model.link )
 			model.link = new Link();
 		
 		Object.defineProperty( model.link, 'url', { value : arg_url, enumerable : true } );
 	}	
 	
-
+	
 	// コンストラクタにすることでプロトタイプで共通のメソッドを定義できる
 	function Link() {}
 	
 	Link.prototype = {
 		
+		// 各モデルの設定
 		// リンク先を新しいタブで開くか（'ON' or 'OFF'）のデフォルト値
 		isNewTab: 'OFF',
 		
-		// 個別の設定
+		
 		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnMouse: 'OFF',
+		
 		
 		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnTouch: 'ON',
 		
+		
 		shineColor: 0x888888, // THREE.Color( shineColor ) or THREE.Color( shineColer.r, shineColer.g, shineColer.b )
 		
-		// 個々の新規タブ設定関数
+		
+		// 関数で使うプロパティ
+		// 発光時モデルを入れるオブジェクト
+		emissiveObject: undefined,
+		
+		
+		// 各モデルの新規タブ設定を行う関数
 		// 第二引数が'ALL'のときはプロトタイプのプロパティを変更する。
 		setNewTab: function( value, is_all = undefined ) {
 			
@@ -85,23 +117,35 @@
 				this.isNewTab = value;
 		},
 		
-		// 個々の値の変更関数
+		
+		setShineColor: function( value, is_all = undefined ){
+			
+			if( is_all === 'ALL' )
+				Link.prototype.shineColor = value;
+			else
+				this.emissiveObject = new webGlLib.Color( value );
+		},
+		
+		
+		// 各モデルの発光設定の変更関数
 		setShineOnMouse: function( value, is_all = undefined ) {
 			
+			// 発光機能自体が切れてたらONにする
 			if( value !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF' )
-				// 発光機能をオフにする
 				domEvent.isShineOnMouseCanvas = value;
 			
+			// 全体の発光設定を変更する
 			if( is_all === 'ALL' ) {
 				
-				// 全てのモデルの発光設定をオフにする
+				// 全てのモデルの発光設定を変更する
 				Link.prototype.isShineOnMouse = value;
-				// 発光機能をオフにする
+				// 発光機能を変更にする
 				domEvent.isShineOnMouseCanvas = value;
 			}
 			else	
 				this.isShineOnMouse = value;
 		},
+		
 		
 		setShineOnTouch: function( value, is_all = undefined ) {
 			
@@ -122,40 +166,60 @@
 	// マウスやタッチ操作に関するオブジェクトを格納
 	const domEvent = {
 					
-		
-		renderer: undefined,
-		
-		
 		// カーソルの座標が動いた回数を計測
 		moveCount: 0,
 		
 		
-		// マウスの座標にあるモデルを格納するオブジェクト
+		// カーソルの座標にあるモデルを格納するオブジェクト
 		itsModel: undefined,
 		
 		
-		// 今マウスと交差するモデルの前に交差したモデルを格納するオブジェクト
+		// 今カーソルと交差するモデルの前に交差したモデルを格納するオブジェクト
 		selectedModel: {
 			material: {
-				emissive: {}
+				emissive: undefined
 			}
 		},
 		
 		
+		// 画面座標代入用
 		rect: undefined,
 		
 		
+		// 画面に乗っかっている指の数の格納用
 		touchLen: 0,
 		
-
-		// 全体の発光処理のフラグ
+		
+		// 全体の発光処理のフラグ（任意に変更可）
 		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnMouseCanvas: 'OFF',
+		
 		
 		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
 		isShineOnTouchCanvas: 'ON',
 		
-
+		
+		// 任意に変更可
+		cursorDefault: 'auto',
+		
+		
+		cursorOn3Dink: 'pointer',
+		
+		
+		// 発光を止める際に代入
+		nonEmissiveObject: new webGlLib.Color( 0 ),
+		
+		//
+		// 以下、メソッド内で呼び出すメソッド
+		//
+		
+		// 発光時の色をセットして、発光オブジェクトを生成
+		createEmissiveObject: 
+			function () {
+				Link.prototype.emissiveObject = new webGlLib.Color( Link.prototype.shineColor );
+			},
+		
+		
 		// マウスの座標を得る
 		getMousePoint:
 			function (e) {
@@ -163,6 +227,7 @@
 				// マウス位置(2D)
 				// マウスの座標を取得し、-1～+1の範囲に正規化する
 				const mouse = new webGlLib.Vector2();
+				
 				mouse.x = e.clientX - this.rect.left;
 				mouse.y = e.clientY - this.rect.top;
 				
@@ -171,7 +236,8 @@
 				
 				return mouse;
 			},
-
+		
+		
 		// 指の座標を得る
 		getTouchPoint:
 			function (e) {
@@ -179,17 +245,18 @@
 			    // 指の位置(2D)
 				// 指の座標を取得し、-1～+1の範囲に正規化する
 				const touch = new webGlLib.Vector2();
+				
 			    touch.x = e.touches[ 0 ].clientX - this.rect.left;
 			    touch.y = e.touches[ 0 ].clientY - this.rect.top;
-			
+				
 				touch.x =  ( touch.x / WIDTH  ) * 2 - 1;
 				touch.y = -( touch.y / HEIGHT ) * 2 + 1;
-		
+				
 				return touch;
 			},
 		
-					
-		// マウスカーソルが指した座標に存在する全てのオブジェクトを得る
+		
+		// カーソルが指した座標に存在する全てのオブジェクトを得る
 		getIntersectObj:
 			function ( mouse, camera, scene ) {
 				
@@ -198,6 +265,44 @@
 				
 				// 外部から読み込んだオブジェクトも確認する場合はrecursive（第二引数）をtrueにする
 				return ray.intersectObjects( scene.children, true );
+			},
+		
+		
+		// .objから読み込んだモデルのだったときの処理
+		setParentObj:
+			function () {
+				
+				if( !this.itsModel.link ) {
+					this.itsModel = this.itsModel.parent;
+					this.itsModel.isParent = true;
+				}
+			},
+		
+		
+		// モデルを発光させる
+		setShineModel:
+			function ( itsModel ) {
+				if( itsModel.isParent ) {
+					for( let i in itsModel.children ) {
+						itsModel.children[i].material.emissive = itsModel.link.emissiveObject;
+					}
+				}
+				else
+					itsModel.material.emissive = itsModel.link.emissiveObject;
+			},
+		
+		
+		// 発光を止める
+		resetShineModel:
+			function ( selectedMatl ) {
+				// 以前カーソルを置いて光らせたモデルを元に戻す
+				if( this.selectedModel.isParent ) {
+					for( let i in this.selectedModel.children ) {
+						this.selectedModel.children[i].material.emissive = this.nonEmissiveObject;
+					}
+				}
+				else
+					selectedMatl.emissive = this.nonEmissiveObject;
 			},
 		
 		
@@ -215,14 +320,11 @@
 				
 				parent.appendChild( el, null );
 				
-				el.setAttribute( "href", this.itsModel.link.url );
+				el.id = 'Anchor3Dink';
 				
-				//el.innerHTML = "a";
+				el.setAttribute( 'href', this.itsModel.link.url );
 				
-				el.style.display = "inline-block";
-				
-				//el.style["z-index"] = "1";
-				//el.sytle. = intersects[0].object.matrixWorld;
+				el.style.display = 'inline-block';
 				
 				el.style.top  = e.clientY - this.rect.top  - area/2 + 'px';
 				el.style.left = e.clientX - this.rect.left - area/2 + 'px';
@@ -230,10 +332,11 @@
 				el.style.width  = area + 'px';
 				el.style.height = area + 'px';
 				
-				el.style.position = "absolute";
+				el.style.position = 'absolute';
 				
-				parent.style.position = "relative";
+				parent.style.position = 'relative';
 			},
+		
 		
 		// タッチ
 		addAnchorTouch:
@@ -248,14 +351,11 @@
 				
 				parent.appendChild( el, null );
 				
-				el.setAttribute( "href", this.itsModel.link.url );
+				el.id = 'Anchor3Dink';
 				
-				//el.innerHTML = "a";
+				el.setAttribute( 'href', this.itsModel.link.url );
 				
-				el.style.display = "inline-block";
-				
-				//el.style["z-index"] = "1";
-				//el.sytle. = intersects[0].object.matrixWorld;
+				el.style.display = 'inline-block';
 				
 				el.style.top  = e.touches[ 0 ].clientY - this.rect.top  - area/2 + 'px';
 				el.style.left = e.touches[ 0 ].clientX - this.rect.left - area/2 + 'px';
@@ -263,15 +363,16 @@
 				el.style.width  = area + 'px';
 				el.style.height = area + 'px';
 				
-				el.style.position = "absolute";
+				el.style.position = 'absolute';
 				
-				parent.style.position = "relative";
+				parent.style.position = 'relative';
 			},
 		
 		
 		//
-		// フレキシブルに変化する処理
+		// モード設定やデバイスにより変化する処理
 		//
+		
 		// 関数モード
 		// マウス
 		//　発光有り
@@ -280,154 +381,126 @@
 			function () {
 				
 				let selectedMatl = this.selectedModel.material;
+				const style = renderer.domElement.style;
 				
-				const style = this.renderer.domElement.style;
-				
-				// マウスと交差しているオブジェクトが有るか
-				if( this.itsModel ) {
-					
-					// オブジェクトが発光していないか（各プロパティが 0 か）確認
-					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
-						
-						if( this.itsModel.link || this.itsModel.parent.link ){
-							
-							// .objから読み込んだモデルの時
-							if( !this.itsModel.link ) {
-								
-								this.itsModel = this.itsModel.parent;
-								
-								this.itsModel.isParent = true;
-							}
-							
-							if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
-								
-								if( this.itsModel.isParent ) {
-									for( let i in this.itsModel.children ) {
-										this.itsModel.children[i].material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-									}
-								}
-								else
-									this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-								
-								style.cursor = 'pointer';
-								
-							}
-						}
-							
-						else style.cursor = 'auto';
-						
-						// マウスの乗ってるモデルが変わったら
-						if( this.selectedModel !== this.itsModel ) {
-							
-							// 以前カーソルを置いて光らせたモデルを元に戻す
-							if( this.selectedModel.isParent ) {
-								for( let i in this.selectedModel.children ) {
-									this.selectedModel.children[i].material.emissive = new webGlLib.Color( 0 );
-								}
-							}
-							else
-								selectedMatl.emissive = new webGlLib.Color( 0 );
-							
-							// 現在カーソルを置いているモデルを代入
-							this.selectedModel = this.itsModel;
-						}
-					}
-				}
-				
-				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else if( style.cursor !== 'auto' ){
-					
-					style.cursor = 'auto'
-					
-					selectedMatl.emissive = new webGlLib.Color( 0 );
-				}
-			},
-
-
-		// マウス
-		// 発光なし
-		// マウスポインタの変更のみ。イベント内関数なので常時繰り返される。
-		changeCursorFn:
-			function () {
-									
-				const style = this.renderer.domElement.style;
-		
-				// マウスと交差しているオブジェクトが有るか
+				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
 					if( this.itsModel.link || this.itsModel.parent.link ){
 						
 						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
+						this.setParentObj();						
 						
-						if( this.itsModel.link.url ) {
+						if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
 							
-							style.cursor = 'pointer';
+							// オブジェクトが発光していない（各プロパティが 0 ）場合
+							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+								this.setShineModel( this.itsModel );
+							
+							style.cursor = this.cursorOn3Dink;
 						}
+					}
 						
-						else style.cursor = 'auto';
+					// モデルにリンクがない場合はカーソルを元に戻す
+					else style.cursor = this.cursorDefault;
+					
+					// マウスの乗ってるモデルが変わったら
+					if( this.selectedModel !== this.itsModel ) {
+						
+						// オブジェクトの発光を止める
+						this.resetShineModel( selectedMatl );
+						
+						// 現在カーソルを置いているモデルを代入
+						this.selectedModel = this.itsModel;
 					}
 				}
 				
-				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
-				else if( style.cursor !== 'auto' ) {
+				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
+				else if( style.cursor !== this.cursorDefault ){
 					
-					style.cursor = 'auto'
+					style.cursor = this.cursorDefault;
+					
+					this.resetShineModel( selectedMatl );
 				}
 			},
-
-
+		
+		
+		// マウス
+		// 発光なし
+		// マウスポインタの変更のみ。イベント内関数なので常時繰り返される。
+		changeCursorFn:
+			function () {
+				
+				const style = renderer.domElement.style;
+				
+				// マウスと交差しているオブジェクトが有る場合
+				if( this.itsModel ) {
+					
+					if( this.itsModel.link || this.itsModel.parent.link ){
+						
+						// .objから読み込んだモデルの時
+						this.setParentObj();						
+						
+						if( this.itsModel.link.url ) {
+							
+							style.cursor = this.cursorOn3Dink;
+						}
+						
+					}
+					
+					// モデルにリンクがない場合はカーソルを元に戻す
+					else style.cursor = this.cursorDefault;
+				}
+				
+				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
+				else if( style.cursor !== this.cursorDefault ) {
+					
+					style.cursor = this.cursorDefault;
+				}
+			},
+		
+		
 		// タッチ
 		// 発光有り
 		shineModelFnTouch:
 			function () {
-				console.log("FnTouch");
+				
 				let selectedMatl = this.selectedModel.material;
 				
-				// 指と交差しているオブジェクトが有るか
+				// 指と交差しているオブジェクトが有るか場合
 				if( this.itsModel ) {
 					
-					// オブジェクトが発光していない（各プロパティが 0 ）場合
-					if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b ) {
+					if( this.itsModel.link || this.itsModel.parent.link ){
 						
-						if( this.itsModel.link || this.itsModel.parent.link ){
+						// .objから読み込んだモデルの時
+						this.setParentObj();						
+						
+						if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
 							
-							// .objから読み込んだモデルの時
-							if( !this.itsModel.link ) {
-								
-								this.itsModel = this.itsModel.parent;
-								
-								this.itsModel.isParent = true;
-							}
-							
-							if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
-							
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-								
-							}
-							
-							// 指の乗ってるモデルが変わったか
-							if( this.selectedModel !== this.itsModel ) {
-								
-								// 以前指を置いて光らせたモデルを元に戻す
-								selectedMatl.emissive = new webGlLib.Color( 0 );
-								
-								// 現在指を置いているモデルを代入
-								this.selectedModel = this.itsModel;
-							}
+							// オブジェクトが発光していない（各プロパティが 0 ）場合
+							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+								this.setShineModel( this.itsModel );
 						}
+					}
+					
+					// 指の乗ってるモデルが変わったら
+					if( this.selectedModel !== this.itsModel ) {
+						
+						// 以前指を置いて光らせたモデルを元に戻す
+						this.resetShineModel( selectedMatl );
+						
+						// 現在指を置いているモデルを代入
+						this.selectedModel = this.itsModel;
 					}
 				}
 				
 				// 指と交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				// オブジェクトが発光していないか（各プロパティが 0 以外か）確認
+				// 以前指を置いたオブジェクトが発光していたら（各プロパティが 0 以外）
 				else if( selectedMatl.emissive.r && selectedMatl.emissive.g && selectedMatl.emissive.b ){
 					
-					selectedMatl.emissive = new webGlLib.Color( 0 );
+					// 以前指を置いて光らせたモデルを元に戻す
+					this.resetShineModel( selectedMatl );
 				}
-
-
 			},
 		
 		
@@ -436,112 +509,122 @@
 		// マウスの乗ったモデルを光らせる。イベント内関数なので常時繰り返される。
 		shineModelA:
 			function (e) {
-				console.log("A");
+				
 				let selectedMatl = this.selectedModel.material;
 				
-				const style = this.renderer.domElement.style;
+				const style = renderer.domElement.style;
 				
-				const el = this.renderer.domElement.parentNode.querySelector( "a" );
+				// renderer(canvas)の親タグにあるアンカータグを取得
+				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
-		
-				// マウスと交差しているオブジェクトが有るか
-				if( this.itsModel ) {
-					
-					if( this.itsModel.link || this.itsModel.parent.link ){
-						
-						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
-					
-						if( this.itsModel.link.url ) {
-							
-							// オブジェクトが発光していないか（各プロパティが 0 か）確認
-							if( this.itsModel.link.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
-							
-							style.cursor = 'pointer';
-							
-							this.addAnchorMouse( e, el, parent );
-						}
-						
-						else {
-							style.cursor = 'auto';
-							
-							if(el !== null)
-								parent.removeChild(el);
-						}
-						
-						// マウスの乗ってるモデルが一緒か
-						if( this.selectedModel !== this.itsModel ) {
-							
-							// 以前カーソルを置いて光らせたモデルを元に戻す
-							selectedMatl.emissive = new webGlLib.Color( 0 );
-							
-							// 現在カーソルを置いているモデルを代入
-							this.selectedModel = this.itsModel;
-						}
-					}
-				}
+				const parent = renderer.domElement.parentNode;
 				
-				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else　if( style.cursor !== 'auto' ) {
-					
-					style.cursor = 'auto'
-					
-					selectedMatl.emissive = new webGlLib.Color( 0 );
-				}
-			},
-
-
-		// マウス
-		// 発光なし
-		// マウスポインタの変更のみ。イベント内関数なので常時繰り返される。
-		changeCursorA:
-			function (e) {
-									
-				const style = this.renderer.domElement.style;
-				
-				const el = this.renderer.domElement.parentNode.querySelector( "a" );
-				
-				const parent = this.renderer.domElement.parentNode;
-		
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
 					if( this.itsModel.link || this.itsModel.parent.link ){
 						
 						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
+						this.setParentObj();
+						
+						if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
+							
+							// オブジェクトが発光していない（各プロパティが 0 ）場合
+							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+								this.setShineModel( this.itsModel );
+							
+							style.cursor = this.cursorOn3Dink;
+							
+							// アンカータグを挿入
+							this.addAnchorMouse( e, el, parent );
+						}
+						
+						else {
+							style.cursor = this.cursorDefault;
+							
+							// アンカータグがあれば削除
+							if( el !== null )
+								parent.removeChild(el);
+						}
+						
+						// マウスの乗ってるモデルが変わったら
+						if( this.selectedModel !== this.itsModel ) {
+							
+							// 以前カーソルを置いて光らせたモデルを元に戻す
+							this.resetShineModel( selectedMatl );
+							
+							// 現在カーソルを置いているモデルを代入
+							this.selectedModel = this.itsModel;
+						}
+					}
 					
+					// アンカータグがあれば削除
+					else if( el !== null )
+						parent.removeChild(el);
+				}
+				
+				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
+				else　if( style.cursor !== this.cursorDefault ) {
+					
+					style.cursor = this.cursorDefault;
+					
+					this.resetShineModel( selectedMatl );
+
+				}
+				
+				// アンカータグがあれば削除
+				else if( el !== null )
+					parent.removeChild(el);
+			},
+		
+		
+		// マウス
+		// 発光なし
+		// マウスポインタの変更のみ。イベント内関数なので常時繰り返される。
+		changeCursorA:
+			function (e) {
+				
+				const style = renderer.domElement.style;
+				
+				const el = global.document.getElementById( 'Anchor3Dink' );
+				
+				const parent = renderer.domElement.parentNode;
+				
+				// マウスと交差しているオブジェクトが有る場合
+				if( this.itsModel ) {
+					
+					if( this.itsModel.link || this.itsModel.parent.link ){
+						
+						// .objから読み込んだモデルの時
+						this.setParentObj();
+						
 						if( this.itsModel.link.url ) {
 							
-							style.cursor = 'pointer';
+							style.cursor = this.cursorOn3Dink;
 							
 							this.addAnchorMouse( e, el, parent );
 						}
 						
 						else {
-							style.cursor = 'auto';
-			
-							if(el !== null)
+							style.cursor = this.cursorDefault;
+							
+							if( el !== null )
 								parent.removeChild(el);
 						}
 					}
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、カーソルを元に戻す
-				else if( style.cursor !== 'auto' ) {
+				else if( style.cursor !== this.cursorDefault ) {
 					
-					style.cursor = 'auto'
+					style.cursor = this.cursorDefault;
 					
 					if( el !== null )
 						parent.removeChild(el);
 				}
 			},
-
-
+		
+		
 		// タッチ
 		// 発光有り
 		// 指の乗ったモデルを光らせる。イベント内関数なので常時繰り返される。
@@ -550,39 +633,38 @@
 				
 				let selectedMatl = this.selectedModel.material;
 				
-				const el = this.renderer.domElement.parentNode.querySelector( "a" );
+				const el = global.document.getElementById( 'Anchor3Dink' );
 				
-				const parent = this.renderer.domElement.parentNode;
+				const parent = renderer.domElement.parentNode;
 				
-				// 指と交差しているオブジェクトが有るか
+				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
 					if( this.itsModel.link || this.itsModel.parent.link ){
 						
 						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
-					
-						if( this.itsModel.link.url ) {
+						this.setParentObj();						
+						
+						if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
 							
-							// オブジェクトが発光していない（各プロパティが 0 ）のとき
-							if( this.itsModel.link.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
-								this.itsModel.material.emissive = new webGlLib.Color( this.itsModel.link.shineColor );
+							// オブジェクトが発光していない（各プロパティが 0 ）場合
+							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+								this.setShineModel( this.itsModel );
 							
 							this.addAnchorTouch( e, el, parent );
 						}
 						
 						else {
-		
+							
 							if( el !== null )
 								parent.removeChild(el);
 						}
 						
-						// 指の乗ってるモデルが一緒か
+						// 指の乗ってるモデルが変わったら
 						if( this.selectedModel !== this.itsModel ) {
 							
 							// 以前指を置いて光らせたモデルを元に戻す
-							selectedMatl.emissive = new webGlLib.Color( 0 );
+							this.resetShineModel( selectedMatl );
 							
 							// 現在指を置いているモデルを代入
 							this.selectedModel = this.itsModel;
@@ -591,10 +673,10 @@
 				}
 				
 				// 指と交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				// オブジェクトが発光していないか（各プロパティが 0 以外か）確認
+				// オブジェクトが発光している（各プロパティが 0 ）場合
 				else if( selectedMatl.emissive.r && selectedMatl.emissive.g && selectedMatl.emissive.b ){
 					
-					selectedMatl.emissive = new webGlLib.Color( 0 );
+					this.resetShineModel( selectedMatl );
 					
 					if( el !== null )
 						parent.removeChild(el);
@@ -602,25 +684,23 @@
 			},
 		
 		
-			
 		// タッチ
 		// 発光なし
 		// 指の位置と交差するオブジェクトの取得、移動カウントのみ行う
-		getItsObjA:
+		addAnchorItsObjA:
 			function (e) {
-									
-				const el = this.renderer.domElement.parentNode.querySelector( "a" );
 				
-				const parent = this.renderer.domElement.parentNode;
-		
-				// マウスと交差しているオブジェクトが有るか
+				const el = global.document.getElementById( 'Anchor3Dink' );
+				
+				const parent = renderer.domElement.parentNode;
+				
+				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
 					if( this.itsModel.link || this.itsModel.parent.link ){
 						
 						// .objから読み込んだモデルの時
-						if( !this.itsModel.link )
-							this.itsModel = this.itsModel.parent;
+						this.setParentObj();
 						
 						if( this.itsModel.link.url ) {
 							
@@ -628,8 +708,8 @@
 						}
 						
 						else {
-			
-							if(el !== null)
+							
+							if( el !== null )
 								parent.removeChild(el);
 						}
 					}
@@ -638,40 +718,38 @@
 				else if( el !== null )
 					parent.removeChild(el);
 			},
-
 		
-		// Eventを処理する共通のダイナミックな関数
+		
+		// Eventを処理する共通のダイナミックな雛形関数
 		makeEventFnc:
 			function ( getPoint, process ) {
 				
 				return function (e) {
-//		console.time('t1');
 					
-					if( !this.rect )
-						this.rect = this.renderer.domElement.getBoundingClientRect();
+					this.rect = renderer.domElement.getBoundingClientRect();
 					
 					const pointer = getPoint(e);
 					
 					const intersects = this.getIntersectObj( pointer, camera, scene );
 					
-					if( intersects[0] ) this.itsModel = intersects[0].object;
+					if( intersects[0] )
+						this.itsModel = intersects[0].object;
+					
 					else this.itsModel = undefined;
 					this.moveCount++;
 					
-console.log(intersects[0].object);
 					// モードによって動的に変化する関数
 					process(e);
-//		console.timeEnd('t1');			
 				}
 			},
 		
-		
+		// 関数モード
 		// モデルをクリックでリンク発動。イベント内関数なので常時繰り返される。
 		loadPageLink:
 			function (e) {
 				
 				if( this.moveCount < 2 ) {
-					// 特定のモデルをクリックでリンク発動
+					
 					if( this.itsModel ) {
 						
 						if( !this.itsModel.link ){
@@ -683,9 +761,10 @@ console.log(intersects[0].object);
 							else return;
 						}
 						
+						// 特定のモデルをクリックでリンク発動
 						if( this.itsModel.link.url ) {
-console.log(e.button);
 							
+							// 左クリックか一本指でタッチ
 							if( e.button === 0 || this.touchLen === 1 ){
 								
 								if( this.itsModel.link.isNewTab === 'ON' )
@@ -703,15 +782,12 @@ console.log(e.button);
 					}
 				}
 			},
-
-
-
+		
+		
 		//　ハイパーリンクEvent追加関数
 		// 第一引数：リンク実装方法(関数モードとAタグモード) "Fn"(default) or "A"
 		addFnc:
-			function ( renderer, is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
-				
-				this.renderer = renderer;
+			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
 				
 				if( !WIDTH ){
 					WIDTH = renderer.domElement.style.width;
@@ -722,16 +798,18 @@ console.log(e.button);
 					HEIGHT = HEIGHT.substr( 0, HEIGHT.length-2 );
 				}
 				
+				// モード別関数代入用変数
 				let evfnc;
 				
-				//　ピッキング処理（マウスor指を乗っけた時 ）
-				// ポインタ操作でのリンク読み込みをHTMLのアンカータグで実現する場合
+				// 発光オブジェクト作成
+				this.createEmissiveObject();
 				
 				//　ピッキング処理（マウスor指を乗っけた時）
 				// ポインタ操作でのリンク読み込みをJavaScriptの関数で実現する場合
+				//
+				// マウス操作での処理
 				if( is_Hyperlink_mode === 'Fn' ) {
 					
-					// マウス操作での処理
 					if( this.isShineOnMouseCanvas === 'ON' ){
 						
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
@@ -750,6 +828,8 @@ console.log(e.button);
 					
 					//　ピッキング処理（クリックしてリンクを作動）
 					renderer.domElement.addEventListener( 'mouseup', this.loadPageLink.bind(this), false );	
+					
+					console.log( 'Mouse: <Fuction> Mode by 3Dink.js' );
 				}
 				
 				
@@ -777,9 +857,14 @@ console.log(e.button);
 					
 					//　ピッキング処理（クリックしてリンクを作動）
 					renderer.domElement.addEventListener( 'touchend', this.loadPageLink.bind(this), false );	
+					
+					console.log( 'Touch: <Fuction> Mode by 3Dink.js' );
 				}
 				
 				
+				//　ピッキング処理（マウスor指を乗っけた時 ）
+				// ポインタ操作でのリンク読み込みをHTMLのアンカータグで実現する場合
+				//
 				// マウス操作での処理
 				if( is_Hyperlink_mode === 'A' ) {
 					
@@ -804,8 +889,10 @@ console.log(e.button);
 						
 						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
 					}
-				}
 					
+					console.log( 'Mouse: <Anchor Tag> Mode by 3Dink.js' );
+				}
+				
 				// タッチ操作での処理
 				if( is_Hyperlink_mode_touch === 'A' ) {
 					
@@ -815,57 +902,51 @@ console.log(e.button);
 						
 						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );
-						renderer.domElement.addEventListener( 'mouseup', function (e){console.log("m", e.button);}, false );		
+						renderer.domElement.addEventListener( 'mouseup', function (){}, false );		
 					}
 					
 					else {
 						
-						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.getItsObjA.bind(this) );
+						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.addAnchorItsObjA.bind(this) );
 						
 						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchend', function (){}, false );		
 					}
+					
+					console.log( 'Touch: <Anchor Tag> Mode by 3Dink.js' );
 				}
-				
 			},
 		
-
 	}; // domEvent閉じ
-		
-		
+	
+	
 	// ここにはオブジェクト同士の衝突によるリンク発動関数を置く予定
 	
 	
-	function createBox( g_x, g_y, g_z, p_x, p_y, p_z, txr = undefined ){
+	// 簡単に四角形を作成するための関数（テストのために作成）
+	function createBox( g_x, g_y, g_z, p_x, p_y, p_z, txr = undefined, arg_color = undefined ){
 		
 		// モデル（直方体）を配置
 		// 直方体のサイズをBoxGeometry(x, y, z)で指定。
-		const geometry = new webGlLib.BoxGeometry(g_x, g_y, g_z);
+		const geometry = new webGlLib.BoxGeometry( g_x, g_y, g_z );
 		
-		if( txr !== undefined ) {
+		// MeshPhongMaterial({color: hoge})で直方体のカラーを設定
+		if( arg_color !== undefined )
+			var material = new webGlLib.MeshPhongMaterial({ color: arg_color });
+
+		if( txr ) {
 			const texture = new webGlLib.TextureLoader().load( txr );
 			texture.minFilter = webGlLib.LinearFilter;
 			
 			var material = new webGlLib.MeshPhongMaterial({ map: texture });
 		}
-			
-//		else var material = new webGlLib.MeshPhongMaterial({ color: 0x839241 });
-	
-		//　モデルの座標を指定して追加
-		const model = new webGlLib.Mesh(geometry, material);
-		model.position.set(p_x, p_y, p_z);
 		
-/*			const element = document.createElement( 'a' );
-			element.setAttribute("href","/");
-			
-			element.style.WIDTH  = 200 + 'px';  
-			element.style.HEIGHT = 200 + 'px';  
-	
-			model.element = element;
-			model.element.style.position = 'absolute';
-*/
-		// オブジェクトを返して代入させれば、参照（プロトタイプチェーン）は切れない
+		//　モデルの座標を指定して追加
+		const model = new webGlLib.Mesh( geometry, material );
+		model.position.set( p_x, p_y, p_z );
+		
+		// オブジェクトを返して代入させれば、参照（プロトタイプチェーン）は切れない。
 		return model;
 	}
 
@@ -877,13 +958,14 @@ console.log(e.button);
 	//------------------------------------------------------------
 	
 	// value
-
+	
 	// function
 	exports.setWrapperLib = setWrapperLib;
 	exports.setCanvasSize = setCanvasSize;
+	exports.setRendererObj = setRendererObj;
 	exports.addURL = addURL;
 	exports.domEvent = domEvent;
 	exports.createBox = createBox;
-
+	
 }) ));
 

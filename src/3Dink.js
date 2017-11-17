@@ -3,7 +3,7 @@
  * "3Dink" is a library that is aimed at adding every hyperlink to every 3D models.
  * 
  * @author 髭散化汰 / https://twitter.com/higechira
- * Copyright © 2014-2016 髭散化汰
+ * Copyright © 2014-2017 髭散化汰
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

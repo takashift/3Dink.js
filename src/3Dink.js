@@ -64,12 +64,20 @@
 	let scene;
 	let camera;
 	
+	// ver 1.3.0で削除
 	function setRendererObj( arg_renderer, arg_scene, arg_camera ) {
 		renderer = arg_renderer;
 		scene = arg_scene;
 		camera = arg_camera;
 	}
-	
+
+	// Three.js の3つのオブジェクトを、3Dink.js 内で読み込むための関数
+	// （ユーザーの利用している変数名が異なる可能性が有るため）
+	function readRendererObj( arg_renderer, arg_scene, arg_camera ) {
+		renderer = arg_renderer;
+		scene = arg_scene;
+		camera = arg_camera;
+	}
 	
 	// モデルにURLを付与し、ハイパーリンクとする
 	function addURL( model, arg_url ) {

@@ -967,13 +967,14 @@
 	
 	// value
 	
+	// object
+	exports.domEvent = domEvent;	
+
 	// function
 	exports.setWrapperLib = setWrapperLib;
 	exports.setCanvasSize = setCanvasSize;
 	exports.setRendererObj = setRendererObj;
 	exports.addURL = addURL;
-	exports.domEvent = domEvent;
 	exports.createBox = createBox;
-	
 }) ));
 

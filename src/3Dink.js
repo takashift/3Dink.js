@@ -173,7 +173,30 @@
 	
 	// マウスやタッチ操作に関するオブジェクトを格納
 	const domEvent = {
-					
+		
+		// 
+		// ユーザーが設定できるプロパティ 
+		// 
+
+		// 全体の発光処理のフラグ（任意に変更可）
+		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
+		isShineOnMouseCanvas: 'OFF',
+		
+		
+		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
+		isShineOnTouchCanvas: 'ON',
+		
+		
+		cursorDefault: 'auto',
+		
+		
+		cursorOn3Dink: 'pointer',
+		
+		
+		// 
+		// 内部でのみ使用するプロパティ 
+		// 
+
 		// カーソルの座標が動いた回数を計測
 		moveCount: 0,
 		
@@ -198,25 +221,10 @@
 		touchLen: 0,
 		
 		
-		// 全体の発光処理のフラグ（任意に変更可）
-		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
-		isShineOnMouseCanvas: 'OFF',
-		
-		
-		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
-		isShineOnTouchCanvas: 'ON',
-		
-		
-		// 任意に変更可
-		cursorDefault: 'auto',
-		
-		
-		cursorOn3Dink: 'pointer',
-		
-		
 		// 発光を止める際に代入
 		nonEmissiveObject: new webGlLib.Color( 0 ),
-		
+
+
 		//
 		// 以下、メソッド内で呼び出すメソッド
 		//

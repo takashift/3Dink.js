@@ -803,7 +803,7 @@
 		// インターフェイスとなるメソッド
 		// 
 
-		//　ハイパーリンクEvent追加関数
+		// ハイパーリンクEvent追加関数
 		// 第一引数：リンク実装方法(関数モードとAタグモード) "Fn"(default) or "A"
 		addFnc:
 			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
@@ -823,7 +823,7 @@
 				// 発光オブジェクト作成
 				this.createEmissiveObject();
 				
-				//　ピッキング処理（マウスor指を乗っけた時）
+				// ピッキング処理（マウスor指を乗っけた時）
 				// ポインタ操作でのリンク読み込みをJavaScriptの関数で実現する場合
 				//
 				// マウス操作での処理

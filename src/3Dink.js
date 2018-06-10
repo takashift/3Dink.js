@@ -24,14 +24,14 @@
 // 
 // 先頭の処理は多様な使用条件下においても名前空間を適用させるための雛形である。
 // 外側の即時関数で、（5行目）thisと内側の即時関数を引数内で定義して渡しており、
-// さらに（4行目）引数にした内側の即時関数(factory)を実行させることでexportにglobal.Js3Dinkを渡し、
+// さらに（4行目）引数にした内側の即時関数(factory)を実行させることでexportにglobal.DDDINKを渡し、
 // 内側の即時関数のexportのプロパティをグローバルに引き出してる（ブラウザで使用時）。
 // また、即時関数の引数にglobalを渡すことによって、グローバルオブジェクトがwindow以外でも対応
 //---------------------------------------------------------------------------------
 (function ( global, factory ) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports, global ) :
 	typeof define === 'function' && define.amd ? define( ['exports', 'global'], factory ) :
-	(factory( ( global.Js3Dink = global.Js3Dink || {} ), global ));
+	(factory( ( global.DDDINK = global.DDDINK || {} ), global ));
 } ( this, (function ( exports, global ) {
 "use strict";
 
@@ -973,7 +973,7 @@
 	//------------------------------------------------------------
 	// グローバルに出すプロパティ
 	//
-	// exportsに渡さなければJs3Dinkのプロパティに加えられず、プライベートのままになる。
+	// exportsに渡さなければDDDINKのプロパティに加えられず、プライベートのままになる。
 	//------------------------------------------------------------
 	
 	// value

@@ -248,26 +248,26 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 
-var top1 = Js3Dink.createBox( 50, 50, 50, 140, 200, 0 , 'link_texture/link_top.png' );
-Js3Dink.addURL(top1, "./");
+var top1 = DDDINK.createBox( 50, 50, 50, 140, 200, 0 , 'link_texture/link_top.png' );
+DDDINK.addURL(top1, "./");
 scene.add(top1);
 
-var about1 = Js3Dink.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
+var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
 scene.add(about1);
-Js3Dink.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
+DDDINK.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
 
-var site = Js3Dink.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
-Js3Dink.addURL(site, "http://3dink.webcrow.jp/");
+var site = DDDINK.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
+DDDINK.addURL(site, "http://3dink.webcrow.jp/");
 scene.add(site);
 
-//Js3Dink.setCanvasSize(width, height);
+//DDDINK.setCanvasSize(width, height);
 top1.link.setNewTab( 'ON' );
 console.log(1 ,top1.link.isNewTab);
 const shineColor = 0x555555;
 top1.link.setShineColor( shineColor, 'ALL' );
 top1.link.setShineOnMouse('ON', 'ALL');
 //top1.link.setShineOnTouch('OFF', 'ALL');
-//Js3Dink.domEvent.isShineOnMouseCanvas = 'OFF'
+//DDDINK.domEvent.isShineOnMouseCanvas = 'OFF'
 
 /*    // .objの読み込み
     var ObjLoader = new THREE.OBJLoader();
@@ -299,7 +299,7 @@ top1.link.setShineOnMouse('ON', 'ALL');
 					objLoader.load( 'Home.obj', function ( object ) {
 
 						object.position.set(0, 80, 0);
-						Js3Dink.addURL( object, "./" );
+						DDDINK.addURL( object, "./" );
 						
 						object.type = 'mesh';
 						
@@ -318,14 +318,14 @@ top1.link.setShineOnMouse('ON', 'ALL');
 
 				});
 */
-Js3Dink.setRendererObj( renderer, scene, camera );
-Js3Dink.domEvent.addFnc( 'Fn', 'Fn');
+DDDINK.setRendererObj( renderer, scene, camera );
+DDDINK.domEvent.addFnc( 'Fn', 'Fn');
 
 
 //top1.link.setShineOnMouse('fuga');
 console.log(top1.link.isShineOnMouse);
 console.log(about1.link.isShineOnMouse);
-console.log(Js3Dink.domEvent.isShineOnMouseCanvas );
+console.log(DDDINK.domEvent.isShineOnMouseCanvas );
 //console.log(about1.link.isShineOnMouseCanvas );
 /*top1.link.setShineOnMouse('OFF');
 console.log(top1.link.isShineOnMouse);

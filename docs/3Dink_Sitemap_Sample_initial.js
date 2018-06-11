@@ -319,7 +319,7 @@ top1.userData.linkConfig.setShineOnMouse('ON', 'ALL');
 				});
 */
 DDDINK.readRendererObj( renderer, scene, camera );
-DDDINK.domEvent.addFnc( 'A', 'Fn');
+DDDINK.domEvent.addFnc( 'Fn', 'Fn');
 
 
 //top1.link.setShineOnMouse('fuga');

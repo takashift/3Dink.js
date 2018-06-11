@@ -822,6 +822,7 @@
 						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );		
 					}
 					
+					// this.isShineOnMouseCanvas === 'ON'
 					else {
 						
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
@@ -849,6 +850,7 @@
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );		
 					}
 					
+					// this.isShineOnTouchCanvas === 'ON'
 					// カーソルの位置と交差するオブジェクトの取得、移動カウントのみ行う
 					else {
 						
@@ -884,6 +886,7 @@
 						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
 					}
 					
+					// this.isShineOnMouseCanvas === 'ON'
 					else {
 						
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
@@ -910,6 +913,7 @@
 						renderer.domElement.addEventListener( 'touchend', function (){}, false );		
 					}
 					
+					// this.isShineOnTouchCanvas === 'ON'
 					else {
 						
 						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.shineModelATouch.bind(this) );

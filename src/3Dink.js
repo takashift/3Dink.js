@@ -88,7 +88,9 @@
 	function setGlobalLinkConfig(newTab = 'OFF', shineColor = 0x888888, shineOnMouse = 'OFF', shineOnTouch = 'ON') {
 		Link.prototype.isNewTab = newTab;
 		Link.prototype.shineColor = shineColor;
+		// 発光機能を変更にする
 		domEvent.isShineOnMouseCanvas = shineOnMouse;
+		// 全てのモデルの発光設定を変更する
 		Link.prototype.isShineOnMouse = shineOnMouse;
 		domEvent.isShineOnTouchCanvas = shineOnTouch;
 		Link.prototype.isShineOnTouch = shineOnTouch;
@@ -124,56 +126,33 @@
 		
 		// 各モデルの新規タブ設定を行う関数
 		// 第二引数が'ALL'のときはプロトタイプのプロパティを変更する。
-		setNewTab: function( value, is_all = undefined ) {
-			
-			if( is_all === 'ALL' )
-				Link.prototype.isNewTab = value;
-			else
-				this.isNewTab = value;
+		setNewTab: function( value ) {
+			this.isNewTab = value;
 		},
 		
 		
-		setShineColor: function( value, is_all = undefined ){
-			
-			if( is_all === 'ALL' )
-				Link.prototype.shineColor = value;
-			else
-				this.emissiveObject = new webGlLib.Color( value );
+		setShineColor: function( value ){
+			this.emissiveObject = new webGlLib.Color( value );
 		},
 		
 		
 		// 各モデルの発光設定の変更関数
-		setShineOnMouse: function( value, is_all = undefined ) {
+		setShineOnMouse: function( value ) {
 			
 			// 発光機能自体が切れてたらONにする
 			if( value !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF' )
 				domEvent.isShineOnMouseCanvas = value;
 			
-			// 全体の発光設定を変更する
-			if( is_all === 'ALL' ) {
-				
-				// 全てのモデルの発光設定を変更する
-				Link.prototype.isShineOnMouse = value;
-				// 発光機能を変更にする
-				domEvent.isShineOnMouseCanvas = value;
-			}
-			else	
-				this.isShineOnMouse = value;
+			this.isShineOnMouse = value;
 		},
 		
 		
-		setShineOnTouch: function( value, is_all = undefined ) {
+		setShineOnTouch: function( value ) {
 			
 			if( value !== 'OFF' && domEvent.isShineOnTouchCanvas === 'OFF' )
 				domEvent.isShineOnTouchCanvas = value;
 			
-			if( is_all === 'ALL' ) {
-				
-				Link.prototype.isShineOnTouch = value;
-				domEvent.isShineOnTouchCanvas = value;
-			}
-			else
-				this.isShineOnTouch = value;
+			this.isShineOnTouch = value;
 		},
 	}
 	

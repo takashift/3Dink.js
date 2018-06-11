@@ -35,7 +35,7 @@
 } ( this, (function ( exports, global ) {
 "use strict";
 
-	const VERSION = '1.1.7';
+	const VERSION = '2.0.0';
 	console.log('3Dink.js Version', VERSION);
 	
 	
@@ -73,13 +73,16 @@
 	}
 	
 	// モデルにURLを付与し、ハイパーリンクとする
-	function addURL( model, arg_url ) {
+	function addURL( model, arg_url, writable = false ) {
 		
-		if( !model.link )
-			model.link = new Link();
-		
-		Object.defineProperty( model.link, 'url', { value : arg_url, enumerable : true } );
-	}	
+		if( !model.userData.linkConfig ) {
+			model.userData.linkConfig = new Link();
+		}
+		else
+			console.error("already made \"linkConfig\" property in " + Object.keys({model})[0]);
+			
+		Object.defineProperty( model.userData, 'URL', { value : arg_url, enumerable : true, writable : writable } );
+	}
 	
 	
 	// コンストラクタにすることでプロトタイプで共通のメソッドを定義できる
@@ -281,7 +284,7 @@
 		setParentObj:
 			function () {
 				
-				if( !this.itsModel.link ) {
+				if( !this.itsModel.userData.linkConfig ) {
 					this.itsModel = this.itsModel.parent;
 					this.itsModel.isParent = true;
 				}
@@ -293,11 +296,11 @@
 			function ( itsModel ) {
 				if( itsModel.isParent ) {
 					for( let i in itsModel.children ) {
-						itsModel.children[i].material.emissive = itsModel.link.emissiveObject;
+						itsModel.children[i].material.emissive = itsModel.userData.linkConfig.emissiveObject;
 					}
 				}
 				else
-					itsModel.material.emissive = itsModel.link.emissiveObject;
+					itsModel.material.emissive = itsModel.userData.linkConfig.emissiveObject;
 			},
 		
 		
@@ -331,7 +334,7 @@
 				
 				el.id = 'Anchor3Dink';
 				
-				el.setAttribute( 'href', this.itsModel.link.url );
+				el.setAttribute( 'href', this.itsModel.userData.URL );
 				
 				el.style.display = 'inline-block';
 				
@@ -362,7 +365,7 @@
 				
 				el.id = 'Anchor3Dink';
 				
-				el.setAttribute( 'href', this.itsModel.link.url );
+				el.setAttribute( 'href', this.itsModel.userData.URL );
 				
 				el.style.display = 'inline-block';
 				
@@ -395,12 +398,12 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
+						if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
@@ -445,12 +448,12 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.link.url ) {
+						if( this.itsModel.userData.URL ) {
 							
 							style.cursor = this.cursorOn3Dink;
 						}
@@ -479,12 +482,12 @@
 				// 指と交差しているオブジェクトが有るか場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
+						if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
@@ -531,12 +534,12 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();
 						
-						if( this.itsModel.link.isShineOnMouse !== 'OFF' && this.itsModel.link.url ) {
+						if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
@@ -602,12 +605,12 @@
 				// マウスと交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();
 						
-						if( this.itsModel.link.url ) {
+						if( this.itsModel.userData.URL ) {
 							
 							style.cursor = this.cursorOn3Dink;
 							
@@ -649,12 +652,12 @@
 				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.link.isShineOnTouch !== 'OFF' && this.itsModel.link.url ) {
+						if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
 							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
@@ -706,12 +709,12 @@
 				// 指と交差しているオブジェクトが有る場合
 				if( this.itsModel ) {
 					
-					if( this.itsModel.link || this.itsModel.parent.link ){
+					if( this.itsModel.userData.linkConfig || this.itsModel.parent.userData.linkConfig ){
 						
 						// .objから読み込んだモデルの時
 						this.setParentObj();
 						
-						if( this.itsModel.link.url ) {
+						if( this.itsModel.userData.URL ) {
 							
 							this.addAnchorTouch( e, el, parent );
 						}
@@ -761,32 +764,32 @@
 					
 					if( this.itsModel ) {
 						
-						if( !this.itsModel.link ){
+						if( !this.itsModel.userData.linkConfig ){
 							
 							// .objから読み込んだモデルの時
-							if( this.itsModel.parent.link )
+							if( this.itsModel.parent.userData.linkConfig )
 								this.itsModel = this.itsModel.parent;
 							
 							else return;
 						}
 						
 						// 特定のモデルをクリックでリンク発動
-						if( this.itsModel.link.url ) {
+						if( this.itsModel.userData.URL ) {
 							
 							// 左クリックか一本指でタッチ
 							if( e.button === 0 || this.touchLen === 1 ){
 								
-								if( this.itsModel.link.isNewTab === 'ON' )
-									global.open( this.itsModel.link.url );
+								if( this.itsModel.userData.linkConfig.isNewTab === 'ON' )
+									global.open( this.itsModel.userData.URL );
 								
-								else location.href = this.itsModel.link.url;
+								else location.href = this.itsModel.userData.URL;
 							}
 							
 							// ホイールクリックの時は別タブで開く
-							else if( e.button === 1 ) global.open( this.itsModel.link.url );
+							else if( e.button === 1 ) global.open( this.itsModel.userData.URL );
 							
 							// *暫定* 右クリックでコンソールにリンク先を表示
-							else if( e.button === 2 ) console.log( this.itsModel.link.url );
+							else if( e.button === 2 ) console.log( this.itsModel.userData.URL );
 						}
 					}
 				}

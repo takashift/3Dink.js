@@ -80,11 +80,21 @@
 		}
 		else
 			console.error("already made \"linkConfig\" property in " + Object.keys({model})[0]);
-			
+
 		Object.defineProperty( model.userData, 'URL', { value : arg_url, enumerable : true, writable : writable } );
 	}
 	
-	
+	// 全てのグローバルな設定を変更する。
+	function setGlobalLinkConfig(newTab = 'OFF', shineColor = 0x888888, shineOnMouse = 'OFF', shineOnTouch = 'ON') {
+		Link.prototype.isNewTab = newTab;
+		Link.prototype.shineColor = shineColor;
+		domEvent.isShineOnMouseCanvas = shineOnMouse;
+		Link.prototype.isShineOnMouse = shineOnMouse;
+		domEvent.isShineOnTouchCanvas = shineOnTouch;
+		Link.prototype.isShineOnTouch = shineOnTouch;
+	}
+
+
 	// コンストラクタにすることでプロトタイプで共通のメソッドを定義できる
 	function Link() {}
 	
@@ -106,7 +116,8 @@
 		shineColor: 0x888888, // THREE.Color( shineColor ) or THREE.Color( shineColer.r, shineColer.g, shineColer.b )
 		
 		
-		// 関数で使うプロパティ
+
+		// プロトタイプの関数内で使うプロパティ
 		// 発光時モデルを入れるオブジェクト
 		emissiveObject: undefined,
 		
@@ -982,6 +993,7 @@
 	exports.setCanvasSize = setCanvasSize;
 	exports.readRendererObj = readRendererObj;
 	exports.addURL = addURL;
+	exports.setGlobalLinkConfig = setGlobalLinkConfig;
 	exports.createBox = createBox;
 }) ));
 

@@ -85,15 +85,15 @@
 	}
 	
 	// 全てのグローバルな設定を変更する。
-	function setGlobalLinkConfig(newTab = 'OFF', shineColor = 0x888888, shineOnMouse = 'OFF', shineOnTouch = 'ON') {
+	function setGlobalLinkConfig(newTab = 'OFF', shineOnMouse = 'OFF', shineOnTouch = 'ON', shineColor = 0x888888) {
 		Link.prototype.isNewTab = newTab;
-		Link.prototype.shineColor = shineColor;
 		// 発光機能を変更にする
 		domEvent.isShineOnMouseCanvas = shineOnMouse;
 		// 全てのモデルの発光設定を変更する
 		Link.prototype.isShineOnMouse = shineOnMouse;
 		domEvent.isShineOnTouchCanvas = shineOnTouch;
 		Link.prototype.isShineOnTouch = shineOnTouch;
+		Link.prototype.shineColor = shineColor;
 	}
 
 
@@ -815,18 +815,18 @@
 				// マウス操作での処理
 				if( is_Hyperlink_mode === 'Fn' ) {
 					
-					if( this.isShineOnMouseCanvas === 'ON' ){
-						
-						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
-						
-						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );
-					}
-					
-					else {
+					if( this.isShineOnMouseCanvas === 'OFF' ){
 						
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.changeCursorFn.bind(this) );
 						
 						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );		
+					}
+					
+					else {
+						
+						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
+						
+						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );
 					}
 					
 					renderer.domElement.addEventListener( 'mousedown', function (){ this.moveCount = 0; }.bind(this), false );
@@ -841,9 +841,9 @@
 				// タッチ操作での処理
 				if( is_Hyperlink_mode_touch === 'Fn' ) {
 					
-					if( this.isShineOnTouchCanvas === 'ON' ){
+					if( this.isShineOnTouchCanvas === 'OFF' ){
 						
-						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.shineModelFnTouch.bind(this) );
+						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), function (){} );
 						
 						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );		
@@ -852,7 +852,7 @@
 					// カーソルの位置と交差するオブジェクトの取得、移動カウントのみ行う
 					else {
 						
-						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), function (){} );
+						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.shineModelFnTouch.bind(this) );
 						
 						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );		
@@ -873,18 +873,7 @@
 				// マウス操作での処理
 				if( is_Hyperlink_mode === 'A' ) {
 					
-					if( this.isShineOnMouseCanvas === 'ON' ){
-						
-						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
-						
-						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );
-						
-						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelA.bind(this) );
-						
-						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
-					}
-					
-					else {
+					if( this.isShineOnMouseCanvas === 'OFF' ){
 						
 						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.changeCursorFn.bind(this) );
 						
@@ -895,28 +884,39 @@
 						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
 					}
 					
+					else {
+						
+						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelFn.bind(this) );
+						
+						renderer.domElement.addEventListener( 'mousemove', evfnc.bind(this), false );
+						
+						evfnc = this.makeEventFnc( this.getMousePoint.bind(this), this.shineModelA.bind(this) );
+						
+						renderer.domElement.addEventListener( 'mousedown', evfnc.bind(this), false );		
+					}
+					
 					console.log( 'Mouse: <Anchor Tag> Mode by 3Dink.js' );
 				}
 				
 				// タッチ操作での処理
 				if( is_Hyperlink_mode_touch === 'A' ) {
 					
-					if( this.isShineOnTouchCanvas === 'ON' ){
-						
-						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.shineModelATouch.bind(this) );
-						
-						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
-						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );
-						renderer.domElement.addEventListener( 'mouseup', function (){}, false );		
-					}
-					
-					else {
+					if( this.isShineOnTouchCanvas === 'OFF' ){
 						
 						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.addAnchorItsObjA.bind(this) );
 						
 						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );		
 						renderer.domElement.addEventListener( 'touchend', function (){}, false );		
+					}
+					
+					else {
+						
+						evfnc = this.makeEventFnc( this.getTouchPoint.bind(this), this.shineModelATouch.bind(this) );
+						
+						renderer.domElement.addEventListener( 'touchstart', evfnc.bind(this), false );		
+						renderer.domElement.addEventListener( 'touchmove', evfnc.bind(this), false );
+						renderer.domElement.addEventListener( 'mouseup', function (){}, false );		
 					}
 					
 					console.log( 'Touch: <Anchor Tag> Mode by 3Dink.js' );

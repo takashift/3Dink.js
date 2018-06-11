@@ -264,8 +264,9 @@ scene.add(site);
 top1.userData.linkConfig.setNewTab( 'ON' );
 console.log(1 ,top1.userData.linkConfig.isNewTab);
 const shineColor = 0x555555;
-top1.userData.linkConfig.setShineColor( shineColor, 'ALL' );
-top1.userData.linkConfig.setShineOnMouse('ON', 'ALL');
+DDDINK.setGlobalLinkConfig('OFF', '', '', 0xffffff);
+top1.userData.linkConfig.setShineColor( shineColor );
+top1.userData.linkConfig.setShineOnMouse('ON');
 //top1.link.setShineOnTouch('OFF', 'ALL');
 //DDDINK.domEvent.isShineOnMouseCanvas = 'OFF'
 

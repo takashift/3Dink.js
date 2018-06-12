@@ -566,7 +566,7 @@
 				}
 				
 				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else　if( style.cursor !== this.cursorDefault ) {
+				else if( style.cursor !== this.cursorDefault ) {
 					
 					style.cursor = this.cursorDefault;
 					

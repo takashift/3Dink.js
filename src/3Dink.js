@@ -24,15 +24,15 @@
 // 
 // 先頭の処理は多様な使用条件下においても名前空間を適用させるための雛形である。
 // 外側の即時関数で、（5行目）thisと内側の即時関数を引数内で定義して渡しており、
-// さらに（4行目）引数にした内側の即時関数(factory)を実行させることでexportにglobal.DDDINKを渡し、
-// 内側の即時関数のexportのプロパティをグローバルに引き出してる（ブラウザで使用時）。
+// さらに（4行目）引数にした内側の即時関数(factory)を実行させることでexportsにglobal.DDDINKを渡し、
+// 内側の即時関数のexportsのプロパティをグローバルに引き出してる（ブラウザで使用時）。
 // また、即時関数の引数にglobalを渡すことによって、グローバルオブジェクトがwindow以外でも対応
 //---------------------------------------------------------------------------------
 (function ( global, factory ) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports, global ) :
-	typeof define === 'function' && define.amd ? define( ['exports', 'global'], factory ) :
-	(factory( ( global.DDDINK = global.DDDINK || {} ), global ));
-} ( this, (function ( exports, global ) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports ) :
+	typeof define === 'function' && define.amd ? define( ['exports'], factory ) :
+	(factory( ( global.DDDINK = {} ) ));
+} ( this, (function ( exports ) {
 "use strict";
 
 	const VERSION = '2.0.0';
@@ -79,22 +79,22 @@
 			model.userData.linkConfig = new Link();
 		}
 		else
-			console.error("already made \"linkConfig\" property in " + Object.keys({model})[0]);
+			console.error("already made \"linkConfig\" object in " + Object.keys({model})[0]);
 
 		Object.defineProperty( model.userData, 'URL', { value : arg_url, enumerable : true, writable : writable } );
 	}
 	
 	// 全てのグローバルな設定を変更する。
-	function setGlobalLinkConfig(newTab = 'OFF', shineOnMouse = 'OFF', shineOnTouch = 'ON', shineColor = 0x888888) {
+	function setGlobalLinkConfig(newTab, shineOnMouse = 'OFF', shineOnTouch = 'ON', shineColor = 0x888888) {
 		Link.prototype.isNewTab = newTab;
 		Link.prototype.isShineOnMouse = shineOnMouse;
 		Link.prototype.isShineOnTouch = shineOnTouch;
 		Link.prototype.shineColor = shineColor;
 		// 発光機能利用設定を変更にする
-		if(shineOnMouse !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF')
-			domEvent.isShineOnMouseCanvas = shineOnMouse;
-		if(shineOnTouch !== 'OFF' && domEvent.isShineOnTouchCanvas === undefined)
-			domEvent.isShineOnTouchCanvas = shineOnTouch;
+		if(shineOnMouse !== 'OFF')
+			domEvent.isShineOnMouseCanvas = 'ON';
+		if(shineOnTouch === 'OFF' && domEvent.isShineOnTouchCanvas !== undefined )
+			domEvent.isShineOnTouchCanvas = 'OFF';
 	}
 
 
@@ -142,7 +142,7 @@
 			
 			// 発光機能自体が切れてたらONにする
 			if( value !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF' )
-				domEvent.isShineOnMouseCanvas = value;
+				domEvent.isShineOnMouseCanvas = 'ON';
 			
 			this.isShineOnMouse = value;
 		},
@@ -150,8 +150,8 @@
 		
 		setShineOnTouch: function( value ) {
 			
-			if( value !== 'OFF' && domEvent.isShineOnTouchCanvas === 'OFF' )
-				domEvent.isShineOnTouchCanvas = value;
+			if( value !== 'OFF' && domEvent.isShineOnTouchCanvas !== 'ON' )
+				domEvent.isShineOnTouchCanvas = 'ON';
 			
 			this.isShineOnTouch = value;
 		},
@@ -162,28 +162,26 @@
 	const domEvent = {
 		
 		// 
-		// ユーザーが設定できるプロパティ 
+		// ユーザーが設定できるプロパティ（全廃）
 		// 
 
-		// 全体の発光処理のフラグ（任意に変更可）
-		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
-		isShineOnMouseCanvas: 'OFF',
-		
-		
-		// タッチ時の3Dink発光機能（'ON' or 'OFF'、デフォルトでは'ON'）
-		isShineOnTouchCanvas: undefined,
-		
-		
-		cursorDefault: 'auto',
-		
-		
-		cursorOn3Dink: 'pointer',
-		
-		
 		// 
 		// 内部でのみ使用するプロパティ 
 		// 
 
+		// 全体の発光処理のフラグ（任意に変更可）
+		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
+		isShineOnMouseCanvas: 'OFF',		
+		
+		// タッチ時の3Dink発光機能（'ON' or 'OFF'、デフォルトでは'ON'）
+		isShineOnTouchCanvas: undefined,
+		
+		// デフォルトは'auto'
+		cursorDefault: undefined,
+		
+		// デフォルトは'pointer'
+		cursorOn3Dink: undefined,
+		
 		// カーソルの座標が動いた回数を計測
 		moveCount: 0,
 		
@@ -519,7 +517,7 @@
 				const style = renderer.domElement.style;
 				
 				// renderer(canvas)の親タグにあるアンカータグを取得
-				const el = global.document.getElementById( 'Anchor3Dink' );
+				const el = document.getElementById( 'Anchor3Dink' );
 				
 				const parent = renderer.domElement.parentNode;
 				
@@ -590,7 +588,7 @@
 				
 				const style = renderer.domElement.style;
 				
-				const el = global.document.getElementById( 'Anchor3Dink' );
+				const el = document.getElementById( 'Anchor3Dink' );
 				
 				const parent = renderer.domElement.parentNode;
 				
@@ -637,7 +635,7 @@
 				
 				let selectedMatl = this.selectedModel.material;
 				
-				const el = global.document.getElementById( 'Anchor3Dink' );
+				const el = document.getElementById( 'Anchor3Dink' );
 				
 				const parent = renderer.domElement.parentNode;
 				
@@ -694,7 +692,7 @@
 		addAnchorItsObjA:
 			function (e) {
 				
-				const el = global.document.getElementById( 'Anchor3Dink' );
+				const el = document.getElementById( 'Anchor3Dink' );
 				
 				const parent = renderer.domElement.parentNode;
 				
@@ -772,13 +770,13 @@
 							if( e.button === 0 || this.touchLen === 1 ){
 								
 								if( this.itsModel.userData.linkConfig.isNewTab === 'ON' )
-									global.open( this.itsModel.userData.URL );
+									open( this.itsModel.userData.URL );
 								
 								else location.href = this.itsModel.userData.URL;
 							}
 							
 							// ホイールクリックの時は別タブで開く
-							else if( e.button === 1 ) global.open( this.itsModel.userData.URL );
+							else if( e.button === 1 ) open( this.itsModel.userData.URL );
 							
 							// *暫定* 右クリックでコンソールにリンク先を表示
 							else if( e.button === 2 ) console.log( this.itsModel.userData.URL );
@@ -794,7 +792,7 @@
 		// ハイパーリンクEvent追加関数
 		// 第一引数：リンク実装方法(関数モードとAタグモード) "Fn"(default) or "A"
 		addFnc:
-			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn', ) {
+			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn', cursorOn3Dink = 'pointer', cursorDefault = 'auto' ) {
 				
 				if( !WIDTH ){
 					WIDTH = renderer.domElement.style.width;
@@ -808,6 +806,9 @@
 				// 未定義のときはデフォルトの'ON'に設定
 				if( domEvent.isShineOnTouchCanvas === undefined )
 					domEvent.isShineOnTouchCanvas = 'ON'
+
+				this.cursorDefault = cursorDefault;
+				this.cursorOn3Dink = cursorOn3Dink;
 
 				// モード別関数代入用変数
 				let evfnc;

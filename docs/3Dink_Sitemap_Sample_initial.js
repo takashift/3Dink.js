@@ -264,7 +264,7 @@ scene.add(site);
 top1.userData.linkConfig.setNewTab( 'ON' );
 console.log(1 ,top1.userData.linkConfig.isNewTab);
 const shineColor = 0x555555;
-// DDDINK.setGlobalLinkConfig('OFF', '');
+DDDINK.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
 top1.userData.linkConfig.setShineColor( shineColor );
 top1.userData.linkConfig.setShineOnMouse('ON');
 //top1.link.setShineOnTouch('OFF', 'ALL');
@@ -320,7 +320,7 @@ top1.userData.linkConfig.setShineOnMouse('ON');
 				});
 */
 DDDINK.readRendererObj( renderer, scene, camera );
-DDDINK.domEvent.addFnc( 'Fn', 'Fn');
+DDDINK.domEvent.addFnc( 'Fn', 'A');
 
 
 //top1.link.setShineOnMouse('fuga');

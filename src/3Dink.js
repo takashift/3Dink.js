@@ -87,11 +87,13 @@
 	// 全てのグローバルな設定を変更する。
 	function setGlobalLinkConfig(newTab = 'OFF', shineOnMouse = 'OFF', shineOnTouch = 'ON', shineColor = 0x888888) {
 		Link.prototype.isNewTab = newTab;
-		// 発光機能を変更にする
-		domEvent.isShineOnMouseCanvas = shineOnMouse;
+		// 発光機能利用設定を変更にする
+		if(shineOnMouse !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF')
+			domEvent.isShineOnMouseCanvas = shineOnMouse;
 		// 全てのモデルの発光設定を変更する
 		Link.prototype.isShineOnMouse = shineOnMouse;
-		domEvent.isShineOnTouchCanvas = shineOnTouch;
+		if(shineOnTouch !== 'OFF' && domEvent.isShineOnTouchCanvas === 'OFF')
+			domEvent.isShineOnTouchCanvas = shineOnTouch;
 		Link.prototype.isShineOnTouch = shineOnTouch;
 		Link.prototype.shineColor = shineColor;
 	}

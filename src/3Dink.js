@@ -87,15 +87,14 @@
 	// 全てのグローバルな設定を変更する。
 	function setGlobalLinkConfig(newTab = 'OFF', shineOnMouse = 'OFF', shineOnTouch = 'ON', shineColor = 0x888888) {
 		Link.prototype.isNewTab = newTab;
+		Link.prototype.isShineOnMouse = shineOnMouse;
+		Link.prototype.isShineOnTouch = shineOnTouch;
+		Link.prototype.shineColor = shineColor;
 		// 発光機能利用設定を変更にする
 		if(shineOnMouse !== 'OFF' && domEvent.isShineOnMouseCanvas === 'OFF')
 			domEvent.isShineOnMouseCanvas = shineOnMouse;
-		// 全てのモデルの発光設定を変更する
-		Link.prototype.isShineOnMouse = shineOnMouse;
-		if(shineOnTouch !== 'OFF' && domEvent.isShineOnTouchCanvas === 'OFF')
+		if(shineOnTouch !== 'OFF' && domEvent.isShineOnTouchCanvas === undefined)
 			domEvent.isShineOnTouchCanvas = shineOnTouch;
-		Link.prototype.isShineOnTouch = shineOnTouch;
-		Link.prototype.shineColor = shineColor;
 	}
 
 
@@ -171,8 +170,8 @@
 		isShineOnMouseCanvas: 'OFF',
 		
 		
-		// タッチ時の3Dink発光機能（'ON' or 'OFF'）
-		isShineOnTouchCanvas: 'ON',
+		// タッチ時の3Dink発光機能（'ON' or 'OFF'、デフォルトでは'ON'）
+		isShineOnTouchCanvas: undefined,
 		
 		
 		cursorDefault: 'auto',
@@ -395,10 +394,10 @@
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.userData.URL ) {
+						if( this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 							
 							style.cursor = this.cursorOn3Dink;
@@ -479,10 +478,10 @@
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.userData.URL ) {
+						if( this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 						}
 					}
@@ -510,6 +509,7 @@
 		
 		// Aタグモード
 		// マウス
+		// 発光有り
 		// マウスの乗ったモデルを光らせる。イベント内関数なので常時繰り返される。
 		shineModelA:
 			function (e) {
@@ -531,10 +531,10 @@
 						// .objから読み込んだモデルの時
 						this.setParentObj();
 						
-						if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.userData.URL ) {
+						if( this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							if( this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 							
 							style.cursor = this.cursorOn3Dink;
@@ -649,10 +649,10 @@
 						// .objから読み込んだモデルの時
 						this.setParentObj();						
 						
-						if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.userData.URL ) {
+						if( this.itsModel.userData.URL ) {
 							
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if( !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
+							if( this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b )
 								this.setShineModel( this.itsModel );
 							
 							this.addAnchorTouch( e, el, parent );
@@ -794,7 +794,7 @@
 		// ハイパーリンクEvent追加関数
 		// 第一引数：リンク実装方法(関数モードとAタグモード) "Fn"(default) or "A"
 		addFnc:
-			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn' ) {
+			function ( is_Hyperlink_mode = 'Fn', is_Hyperlink_mode_touch = 'Fn', ) {
 				
 				if( !WIDTH ){
 					WIDTH = renderer.domElement.style.width;
@@ -805,6 +805,10 @@
 					HEIGHT = HEIGHT.substr( 0, HEIGHT.length-2 );
 				}
 				
+				// 未定義のときはデフォルトの'ON'に設定
+				if( domEvent.isShineOnTouchCanvas === undefined )
+					domEvent.isShineOnTouchCanvas = 'ON'
+
 				// モード別関数代入用変数
 				let evfnc;
 				

@@ -252,21 +252,21 @@ var top1 = DDDINK.createBox( 50, 50, 50, 140, 200, 0 , 'link_texture/link_top.pn
 DDDINK.addURL(top1, "./");
 scene.add(top1);
 
-var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
-scene.add(about1);
-DDDINK.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
+// var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
+// scene.add(about1);
+// DDDINK.addURL(about1, "http://3dink.webcrow.jp/about3Dink.html");
 
-var site = DDDINK.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
-DDDINK.addURL(site, "http://3dink.webcrow.jp/");
-scene.add(site);
+// var site = DDDINK.createBox( 50, 50, 50, 140, 100, 170 , 'link_texture/3Dink.png' );
+// DDDINK.addURL(site, "http://3dink.webcrow.jp/");
+// scene.add(site);
 
-//DDDINK.setCanvasSize(width, height);
-top1.userData.linkConfig.setNewTab( 'ON' );
-console.log(1 ,top1.userData.linkConfig.isNewTab);
-const shineColor = 0x555555;
-DDDINK.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
-top1.userData.linkConfig.setShineColor( shineColor );
-top1.userData.linkConfig.setShineOnMouse('ON');
+// //DDDINK.setCanvasSize(width, height);
+// top1.userData.linkConfig.setNewTab( 'ON' );
+// console.log(1 ,top1.userData.linkConfig.isNewTab);
+// const shineColor = 0x555555;
+// DDDINK.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
+// top1.userData.linkConfig.setShineColor( shineColor );
+// top1.userData.linkConfig.setShineOnMouse('ON');
 //top1.link.setShineOnTouch('OFF', 'ALL');
 //DDDINK.domEvent.isShineOnMouseCanvas = 'OFF'
 
@@ -325,7 +325,7 @@ DDDINK.domEvent.addFnc( 'Fn', 'A');
 
 //top1.link.setShineOnMouse('fuga');
 console.log(top1.userData.linkConfig.isShineOnMouse);
-console.log(about1.userData.linkConfig.isShineOnMouse);
+// console.log(about1.userData.linkConfig.isShineOnMouse);
 console.log(DDDINK.domEvent.isShineOnMouseCanvas );
 console.log(DDDINK.domEvent.isShineOnTouchCanvas );
 //console.log(about1.link.isShineOnMouseCanvas );
@@ -359,7 +359,64 @@ controls.spaceZ = 1000;
 // 撮影したものをレンダリングする
 function render() {
 	requestAnimationFrame(render);
-	
+
+// ここから試し書き
+	// camera に Raycaster を作成して下方向に ray を向ける
+	const rayXr = new THREE.Raycaster(camera.position, new THREE.Vector3(1, 0, 0));
+	const rayXl = new THREE.Raycaster(camera.position, new THREE.Vector3(-1, 0, 0));
+	const rayYtop = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 1, 0));
+	const rayYbtm = new THREE.Raycaster(camera.position, new THREE.Vector3(0, -1, 0));
+	const rayZfw = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, 1));
+	const rayZbk = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, -1));
+	// intersectObjects に衝突判定対象のメッシュのリストを渡す
+	const objs = ray.intersectObjects(scene.children, true);
+
+	if( objs.length > 0 )
+	{
+		const dist = objs[0].distance;
+		const itsModel = objs[0].object;
+		console.log( dist ); // 衝突判定対象までの距離
+	 
+		// 例）衝突対象オブジェクトとの距離が 0 になった場合
+		if( dist <= 0 )
+		{
+			// やりたい処理を行う
+			if( this.itsModel ) {
+						
+				if( !this.itsModel.userData.linkConfig ){
+					
+					// .objから読み込んだモデルの時
+					if( this.itsModel.parent.userData.linkConfig )
+						this.itsModel = this.itsModel.parent;
+					
+					else return;
+				}
+				
+				// 特定のモデルをクリックでリンク発動
+				if( this.itsModel.userData.URL ) {
+					
+					// // 左クリックか一本指でタッチ
+					// if( e.button === 0 || this.touchLen === 1 ){
+						
+					// 	if( this.itsModel.userData.linkConfig.isNewTab === 'ON' )
+					// 		open( this.itsModel.userData.URL );
+						
+					// 	else location.href = this.itsModel.userData.URL;
+					// }
+					
+					// // ホイールクリックの時は別タブで開く
+					// else if( e.button === 1 ) open( this.itsModel.userData.URL );
+					
+					// // *暫定* 右クリックでコンソールにリンク先を表示
+					// else if( e.button === 2 )
+					 console.log( this.itsModel.userData.URL );
+				}
+			}
+
+		}
+	}
+
+
 	renderer.render(scene, camera);
 }
 

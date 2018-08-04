@@ -265,7 +265,7 @@ scene.add(top1);
 // top1.userData.linkConfig.setNewTab( 'ON' );
 // console.log(1 ,top1.userData.linkConfig.isNewTab);
 // const shineColor = 0x555555;
-// DDDINK.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
+DDDINK.domEvent.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
 // top1.userData.linkConfig.setShineColor( shineColor );
 // top1.userData.linkConfig.setShineOnMouse('ON');
 //top1.link.setShineOnTouch('OFF', 'ALL');

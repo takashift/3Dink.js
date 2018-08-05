@@ -3,7 +3,7 @@
  * "3Dink" is a library that is aimed at adding every hyperlink to every 3D models.
  * 
  * @author 髭散化汰 / https://twitter.com/higechira
- * Copyright © 2014-2017 髭散化汰
+ * Copyright © 2014-2018 髭散化汰
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,6 +144,101 @@
 		},
 	}
 
+
+	// オブジェクト同士の衝突によるリンク発動を設定するオブジェクト
+	const hitEvent = {
+
+		// 三軸方向の当たり判定関数を生成するコンストラクタ
+		// 引数は hitMargin はオブジェクトで渡す。それ以外は、"+-" か "+" か "-"。
+		JudgeXYZ: function (obj, positionOfset = undefined, X = "+-", Y = "+-", Z = "+-") {
+			if (positionOfset) {
+				this.obj = new THREE.Vector3(obj.position.x + positionOfset.x, obj.position.y + positionOfset.y, obj.position.z + positionOfset.z);
+			}
+			else {
+				this.obj = obj;
+			}
+
+			// obj に Raycaster を作成
+			const rays = {};
+			if (X === "+-" || X === "+")
+				rays.Xr = new THREE.Raycaster(this.obj.position, new THREE.Vector3(1, 0, 0));
+			if (X === "+-" || X === "-")
+				rays.Xl = new THREE.Raycaster(this.obj.position, new THREE.Vector3(-1, 0, 0));
+			if (Y === "+-" || Y === "+")
+				rays.Ytop = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 1, 0));
+			if (Y === "+-" || Y === "-")
+				rays.Ybtm = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, -1, 0));
+			if (Z === "+-" || Z === "+")
+				rays.Zfw = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 0, 1));
+			if (Z === "+-" || Z === "-")
+				rays.Zbk = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 0, -1));
+
+			// 3Dink だったら、3Dink用のメソッドを実行するように指定
+			if (obj.userData.URL) {
+				this.judgeHit = function () {
+					for (let key in rays) {
+						hitEvent.locateMy3Dink(obj.userData.URL, rays[key], this.hitMargin[key]);
+					}
+				};
+			}
+			else {
+				this.judgeHit = function () {
+					for (let key in rays) {
+						hitEvent.locateOther3Dink(rays[key], this.hitMargin[key]);
+					}
+				};
+			}
+		},
+
+		locateOther3Dink: function (ray, margin) {
+			// intersectObjects に衝突判定対象のメッシュのリストを渡す
+			const objs = ray.intersectObjects(scene.children, true);
+
+			if (objs.length > 0) {
+				let dist = objs[0].distance;
+				let itsModel = objs[0].object;
+				console.log(dist)
+
+				// 例）衝突対象オブジェクトとの距離が 0 になった場合
+				if (dist <= margin) {
+					// やりたい処理を行う
+					if (!itsModel.userData.linkConfig) {
+
+						// .objから読み込んだモデルの時
+						if (itsModel.parent.userData.linkConfig)
+							itsModel = itsModel.parent;
+
+						else return;
+					}
+
+					// 特定のモデルをクリックでリンク発動
+					if (itsModel.userData.URL) {
+						location.href = itsModel.userData.URL;
+					}
+				}
+			}
+		},
+
+		locateMy3Dink: function (url, ray, margin) {
+			// intersectObjects に衝突判定対象のメッシュのリストを渡す
+			const objs = ray.intersectObjects(scene.children, true);
+
+			if (objs.length > 0) {
+				let dist = objs[0].distance;
+				let itsModel = objs[0].object;
+
+				// 例）衝突対象オブジェクトとの距離が 0 になった場合
+				if (dist <= margin) {
+						location.href = url;
+				}
+			}
+		},
+	}
+
+	hitEvent.JudgeXYZ.prototype.hitMargin = { Xr: 10, Xl: 10, Ytop: 10, Ybtm: 10, Zfw: 10, Zbk: 10 };
+	hitEvent.JudgeXYZ.prototype.CreateHitMargin = (Xr = 10, Xl = 10, Ytop = 10, Ybt = 10, Zfw = 10, Zbk = 10) => {
+		return { Xr: Xr, Xl: Xl, Ytop: Ytop, Ybtm: Ybtm, Zfw: Zfw, Zbk: Zbk };
+	}
 
 	// マウスやタッチ操作に関するオブジェクトを格納
 	const domEvent = {
@@ -978,13 +1073,13 @@
 
 	// object
 	exports.domEvent = domEvent;
+	exports.hitEvent = hitEvent;
 
 	// function
 	exports.setWrapperLib = setWrapperLib;
 	exports.setCanvasSize = setCanvasSize;
 	exports.readRendererObj = readRendererObj;
 	exports.addURL = addURL;
-	// exports.setGlobalLinkConfig = setGlobalLinkConfig;
 	exports.createBox = createBox;
 })));
 

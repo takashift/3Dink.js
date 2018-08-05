@@ -250,7 +250,8 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 var top1 = DDDINK.createBox(50, 50, 50, 140, 200, 0, 'link_texture/link_top.png');
-DDDINK.addURL(top1, "./");
+// DDDINK.addURL(top1, "./");
+DDDINK.addURL(top1, "http://abehiroshi.la.coocan.jp/");
 scene.add(top1);
 
 // var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
@@ -357,64 +358,191 @@ controls.spaceX = 1000;
 controls.spaceZ = 1000;
 
 
+const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
+console.log(isHit.hitMargin);
+
 // 撮影したものをレンダリングする
 function render() {
 	requestAnimationFrame(render);
 
+	isHit.judgeHit();
 	// ここから試し書き
 	// camera に Raycaster を作成して下方向に ray を向ける
-	let ray = {};
-	ray.Xr = new THREE.Raycaster(camera.position, new THREE.Vector3(1, 0, 0));
-	ray.Xl = new THREE.Raycaster(camera.position, new THREE.Vector3(-1, 0, 0));
-	ray.Ytop = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 1, 0));
-	ray.Ybtm = new THREE.Raycaster(camera.position, new THREE.Vector3(0, -1, 0));
-	ray.Zfw = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, 1));
-	ray.Zbk = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, -1));
+	// const ray = {};
+	// let objs;
+	// ray.Xr = new THREE.Raycaster(camera.position, new THREE.Vector3(1, 0, 0));
 
-	for (let name in ray) {
-		// intersectObjects に衝突判定対象のメッシュのリストを渡す
-		let objs = ray[name].intersectObjects(scene.children, true);
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Xr.intersectObjects(scene.children, true);
 
-		if (objs.length > 0) {
-			let dist = objs[0].distance;
-			let itsModel = objs[0].object;
-			console.log(dist); // 衝突判定対象までの距離
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	console.log(dist)
 
-			// 例）衝突対象オブジェクトとの距離が 0 になった場合
-			if (dist <= 10) {
-				// やりたい処理を行う
-				if (!itsModel.userData.linkConfig) {
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
 
-					// .objから読み込んだモデルの時
-					if (itsModel.parent.userData.linkConfig)
-						itsModel = itsModel.parent;
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
 
-					else return;
-				}
+	// 			else return;
+	// 		}
 
-				// 特定のモデルをクリックでリンク発動
-				if (itsModel.userData.URL) {
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
 
-					// // 左クリックか一本指でタッチ
-					// if( e.button === 0 || this.touchLen === 1 ){
+	// ray.Xl = new THREE.Raycaster(camera.position, new THREE.Vector3(-1, 0, 0));
 
-					// 	if( this.itsModel.userData.linkConfig.isNewTab === 'ON' )
-					// 		open( this.itsModel.userData.URL );
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Xl.intersectObjects(scene.children, true);
 
-					// 	else location.href = this.itsModel.userData.URL;
-					// }
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	console.log(dist)
 
-					// // ホイールクリックの時は別タブで開く
-					// else if( e.button === 1 ) open( this.itsModel.userData.URL );
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
 
-					// // *暫定* 右クリックでコンソールにリンク先を表示
-					// else if( e.button === 2 )
-					location.href = itsModel.userData.URL;
-					break;
-				}
-			}
-		}
-	}
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
+
+	// 			else return;
+	// 		}
+
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
+
+	// ray.Ytop = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 1, 0));
+
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Ytop.intersectObjects(scene.children, true);
+
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	console.log(dist)
+
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
+
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
+
+	// 			else return;
+	// 		}
+
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
+
+	// ray.Ybtm = new THREE.Raycaster(camera.position, new THREE.Vector3(0, -1, 0));
+
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Ybtm.intersectObjects(scene.children, true);
+
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	// console.log(dist)
+
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
+
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
+
+	// 			else return;
+	// 		}
+
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
+
+	// ray.Zfw = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, 1));
+
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Zfw.intersectObjects(scene.children, true);
+
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	console.log(dist)
+
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
+
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
+
+	// 			else return;
+	// 		}
+
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
+
+	// ray.Zbk = new THREE.Raycaster(camera.position, new THREE.Vector3(0, 0, -1));
+
+	// // intersectObjects に衝突判定対象のメッシュのリストを渡す
+	// objs = ray.Zbk.intersectObjects(scene.children, true);
+
+	// if (objs.length > 0) {
+	// 	let dist = objs[0].distance;
+	// 	let itsModel = objs[0].object;
+	// 	console.log(dist)
+
+	// 	// 例）衝突対象オブジェクトとの距離が 0 になった場合
+	// 	if (dist <= 10) {
+	// 		// やりたい処理を行う
+	// 		if (!itsModel.userData.linkConfig) {
+
+	// 			// .objから読み込んだモデルの時
+	// 			if (itsModel.parent.userData.linkConfig)
+	// 				itsModel = itsModel.parent;
+
+	// 			else return;
+	// 		}
+
+	// 		// 特定のモデルをクリックでリンク発動
+	// 		if (itsModel.userData.URL) {
+	// 			location.href = itsModel.userData.URL;
+	// 		}
+	// 	}
+	// }
 
 
 	renderer.render(scene, camera);

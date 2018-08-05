@@ -359,13 +359,15 @@ controls.spaceZ = 1000;
 
 
 const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
+isHit.createHitMargin(11,11,11,11,11,11);
 console.log(isHit.hitMargin);
+
 
 // 撮影したものをレンダリングする
 function render() {
-	requestAnimationFrame(render);
+	const id = requestAnimationFrame(render);
 
-	isHit.judgeHit();
+	isHit.judgeHit(id);
 	// ここから試し書き
 	// camera に Raycaster を作成して下方向に ray を向ける
 	// const ray = {};

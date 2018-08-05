@@ -175,29 +175,44 @@
 
 			// 3Dink だったら、3Dink用のメソッドを実行するように指定
 			if (obj.userData.URL) {
-				this.judgeHit = function () {
+				this.judgeHit = function (animationID) {
 					for (let key in rays) {
-						hitEvent.locateMy3Dink(obj.userData.URL, rays[key], this.hitMargin[key]);
+						hitEvent.locateMy3Dink(animationID, obj.userData.URL, rays[key], this.hitMargin[key]);
 					}
 				};
 			}
 			else {
-				this.judgeHit = function () {
+				this.judgeHit = function (animationID) {
 					for (let key in rays) {
-						hitEvent.locateOther3Dink(rays[key], this.hitMargin[key]);
+						hitEvent.locateOther3Dink(animationID, rays[key], this.hitMargin[key]);
 					}
 				};
 			}
 		},
 
-		locateOther3Dink: function (ray, margin) {
+		locateMy3Dink: function (animationID, url, ray, margin) {
 			// intersectObjects に衝突判定対象のメッシュのリストを渡す
 			const objs = ray.intersectObjects(scene.children, true);
 
 			if (objs.length > 0) {
 				let dist = objs[0].distance;
 				let itsModel = objs[0].object;
-				console.log(dist)
+
+				// 例）衝突対象オブジェクトとの距離が 0 になった場合
+				if (dist <= margin) {
+						location.href = url;
+						cancelAnimationFrame(animationID);
+				}
+			}
+		},
+
+		locateOther3Dink: function (animationID, ray, margin) {
+			// intersectObjects に衝突判定対象のメッシュのリストを渡す
+			const objs = ray.intersectObjects(scene.children, true);
+
+			if (objs.length > 0) {
+				let dist = objs[0].distance;
+				let itsModel = objs[0].object;
 
 				// 例）衝突対象オブジェクトとの距離が 0 になった場合
 				if (dist <= margin) {
@@ -213,31 +228,18 @@
 
 					// 特定のモデルをクリックでリンク発動
 					if (itsModel.userData.URL) {
+						console.log(itsModel.userData.URL);
 						location.href = itsModel.userData.URL;
+						cancelAnimationFrame(animationID);
 					}
-				}
-			}
-		},
-
-		locateMy3Dink: function (url, ray, margin) {
-			// intersectObjects に衝突判定対象のメッシュのリストを渡す
-			const objs = ray.intersectObjects(scene.children, true);
-
-			if (objs.length > 0) {
-				let dist = objs[0].distance;
-				let itsModel = objs[0].object;
-
-				// 例）衝突対象オブジェクトとの距離が 0 になった場合
-				if (dist <= margin) {
-						location.href = url;
 				}
 			}
 		},
 	}
 
 	hitEvent.JudgeXYZ.prototype.hitMargin = { Xr: 10, Xl: 10, Ytop: 10, Ybtm: 10, Zfw: 10, Zbk: 10 };
-	hitEvent.JudgeXYZ.prototype.CreateHitMargin = (Xr = 10, Xl = 10, Ytop = 10, Ybt = 10, Zfw = 10, Zbk = 10) => {
-		return { Xr: Xr, Xl: Xl, Ytop: Ytop, Ybtm: Ybtm, Zfw: Zfw, Zbk: Zbk };
+	hitEvent.JudgeXYZ.prototype.createHitMargin = function (Xr = 10, Xl = 10, Ytop = 10, Ybtm = 10, Zfw = 10, Zbk = 10) {
+		this.hitMargin = { Xr: Xr, Xl: Xl, Ytop: Ytop, Ybtm: Ybtm, Zfw: Zfw, Zbk: Zbk };
 	}
 
 	// マウスやタッチ操作に関するオブジェクトを格納

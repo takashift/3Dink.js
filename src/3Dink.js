@@ -200,8 +200,8 @@
 
 				// 例）衝突対象オブジェクトとの距離が 0 になった場合
 				if (dist <= margin) {
-						location.href = url;
-						cancelAnimationFrame(animationID);
+					location.href = url;
+					cancelAnimationFrame(animationID);
 				}
 			}
 		},

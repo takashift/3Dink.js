@@ -250,8 +250,7 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 var top1 = DDDINK.createBox(50, 50, 50, 140, 200, 0, 'link_texture/link_top.png');
-// DDDINK.addURL(top1, "./");
-DDDINK.addURL(top1, "http://abehiroshi.la.coocan.jp/");
+DDDINK.addURL(top1, "./");
 scene.add(top1);
 
 // var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );

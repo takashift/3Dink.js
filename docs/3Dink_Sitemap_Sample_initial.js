@@ -248,14 +248,14 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 
-const top1 = DDDINK.createBox(50, 50, 50, 0, 200, 0, 'link_texture/link_top.png');
+const top1 = DDDINK.createBox(50, 50, 50, 0, 140, 0, 'link_texture/link_top.png');
 DDDINK.addURL(top1, "./");
 // DDDINK.addURL(top1, "http://abehiroshi.la.coocan.jp/");
 scene.add(top1);
 
-const movingCube = DDDINK.createBox(50, 50, 50, 0, 0, 0);
-DDDINK.addURL(movingCube, "./");
-scene.add(movingCube);
+// const movingCube = DDDINK.createBox(50, 50, 50, 0, 0, 0);
+// DDDINK.addURL(movingCube, "./");
+// scene.add(movingCube);
 
 
 // var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
@@ -362,7 +362,7 @@ controls.spaceX = 1000;
 controls.spaceZ = 1000;
 
 
-const isHit = new DDDINK.hitEvent.JudgeXYZ(top1);
+const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
 isHit.createHitMargin(11,11,11,11,11,11);
 console.log(isHit.hitMargin);
 

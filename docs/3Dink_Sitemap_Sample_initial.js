@@ -248,12 +248,13 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 
-var top1 = DDDINK.createBox(50, 50, 50, 0, 200, 0, 'link_texture/link_top.png');
+const top1 = DDDINK.createBox(50, 50, 50, 0, 200, 0, 'link_texture/link_top.png');
 DDDINK.addURL(top1, "./");
 // DDDINK.addURL(top1, "http://abehiroshi.la.coocan.jp/");
 scene.add(top1);
 
 const movingCube = DDDINK.createBox(50, 50, 50, 0, 0, 0);
+DDDINK.addURL(movingCube, "./");
 scene.add(movingCube);
 
 

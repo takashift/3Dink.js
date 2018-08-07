@@ -198,7 +198,7 @@
 			if (objs.length > 0 && objs[0].object.geometry.type !== "PlaneGeometry") {
 				let dist = objs[0].distance;
 				let itsModel = objs[0].object;
-				console.log(itsModel, dist);
+				// console.log(itsModel, dist);
 
 				// 例）衝突対象オブジェクトとの距離が 0 になった場合
 				if (dist <= margin) {
@@ -481,7 +481,7 @@
 						if (this.itsModel.userData.URL) {
 
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if (this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
+							if (this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.material.emissive && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
 								this.setShineModel(this.itsModel);
 
 							style.cursor = this.cursorOn3Dink;
@@ -494,8 +494,9 @@
 					// マウスの乗ってるモデルが変わったら
 					if (this.selectedModel !== this.itsModel) {
 
-						// オブジェクトの発光を止める
-						this.resetShineModel(selectedMatl);
+						if (selectedMatl.emissive)
+							// オブジェクトの発光を止める
+							this.resetShineModel(selectedMatl);
 
 						// 現在カーソルを置いているモデルを代入
 						this.selectedModel = this.itsModel;
@@ -507,7 +508,8 @@
 
 					style.cursor = this.cursorDefault;
 
-					this.resetShineModel(selectedMatl);
+					if (selectedMatl.emissive)
+						this.resetShineModel(selectedMatl);
 				}
 			},
 
@@ -565,7 +567,7 @@
 						if (this.itsModel.userData.URL) {
 
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if (this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
+							if (this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.material.emissive && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
 								this.setShineModel(this.itsModel);
 						}
 					}
@@ -573,8 +575,9 @@
 					// 指の乗ってるモデルが変わったら
 					if (this.selectedModel !== this.itsModel) {
 
-						// 以前指を置いて光らせたモデルを元に戻す
-						this.resetShineModel(selectedMatl);
+						if (selectedMatl.emissive)
+							// 以前指を置いて光らせたモデルを元に戻す
+							this.resetShineModel(selectedMatl);
 
 						// 現在指を置いているモデルを代入
 						this.selectedModel = this.itsModel;
@@ -585,8 +588,9 @@
 				// 以前指を置いたオブジェクトが発光していたら（各プロパティが 0 以外）
 				else if (selectedMatl.emissive.r && selectedMatl.emissive.g && selectedMatl.emissive.b) {
 
-					// 以前指を置いて光らせたモデルを元に戻す
-					this.resetShineModel(selectedMatl);
+					if (selectedMatl.emissive)
+						// 以前指を置いて光らせたモデルを元に戻す
+						this.resetShineModel(selectedMatl);
 				}
 			},
 
@@ -618,7 +622,7 @@
 						if (this.itsModel.userData.URL) {
 
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if (this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
+							if (this.itsModel.userData.linkConfig.isShineOnMouse !== 'OFF' && this.itsModel.material.emissive && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
 								this.setShineModel(this.itsModel);
 
 							style.cursor = this.cursorOn3Dink;
@@ -638,8 +642,9 @@
 						// マウスの乗ってるモデルが変わったら
 						if (this.selectedModel !== this.itsModel) {
 
-							// 以前カーソルを置いて光らせたモデルを元に戻す
-							this.resetShineModel(selectedMatl);
+							if (selectedMatl.emissive)
+								// 以前カーソルを置いて光らせたモデルを元に戻す
+								this.resetShineModel(selectedMatl);
 
 							// 現在カーソルを置いているモデルを代入
 							this.selectedModel = this.itsModel;
@@ -652,11 +657,12 @@
 				}
 
 				// マウスと交差するオブジェクトがない場合は、以前発光させたモデルを元に戻す
-				else if (style.cursor !== this.cursorDefault) {
+				else if (style.cursor !== this.cursorDefault && selectedMatl.material.emissive) {
 
 					style.cursor = this.cursorDefault;
 
-					this.resetShineModel(selectedMatl);
+					if (selectedMatl.emissive)
+						this.resetShineModel(selectedMatl);
 
 				}
 
@@ -736,7 +742,7 @@
 						if (this.itsModel.userData.URL) {
 
 							// オブジェクトが発光していない（各プロパティが 0 ）場合
-							if (this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
+							if (this.itsModel.userData.linkConfig.isShineOnTouch !== 'OFF' && this.itsModel.material.emissive && !this.itsModel.material.emissive.r && !this.itsModel.material.emissive.g && !this.itsModel.material.emissive.b)
 								this.setShineModel(this.itsModel);
 
 							this.addAnchorTouch(e, el, parent);
@@ -751,8 +757,9 @@
 						// 指の乗ってるモデルが変わったら
 						if (this.selectedModel !== this.itsModel) {
 
-							// 以前指を置いて光らせたモデルを元に戻す
-							this.resetShineModel(selectedMatl);
+							if (selectedMatl.emissive)
+								// 以前指を置いて光らせたモデルを元に戻す
+								this.resetShineModel(selectedMatl);
 
 							// 現在指を置いているモデルを代入
 							this.selectedModel = this.itsModel;
@@ -764,7 +771,8 @@
 				// オブジェクトが発光している（各プロパティが 0 ）場合
 				else if (selectedMatl.emissive.r && selectedMatl.emissive.g && selectedMatl.emissive.b) {
 
-					this.resetShineModel(selectedMatl);
+					if (selectedMatl.emissive)
+						this.resetShineModel(selectedMatl);
 
 					if (el !== null)
 						parent.removeChild(el);
@@ -1047,16 +1055,16 @@
 		// 直方体のサイズをBoxGeometry(x, y, z)で指定。
 		const geometry = new webGlLib.BoxGeometry(g_x, g_y, g_z);
 
-		// MeshPhongMaterial({color: hoge})で直方体のカラーを設定
-		if (arg_color !== undefined)
-			var material = new webGlLib.MeshPhongMaterial({ color: arg_color });
-
 		if (txr) {
 			const texture = new webGlLib.TextureLoader().load(txr);
 			texture.minFilter = webGlLib.LinearFilter;
 
 			var material = new webGlLib.MeshPhongMaterial({ map: texture });
 		}
+
+		// MeshPhongMaterial({color: hoge})で直方体のカラーを設定
+		else if (arg_color)
+			var material = new webGlLib.MeshPhongMaterial({ color: arg_color });
 
 		//　モデルの座標を指定して追加
 		const model = new webGlLib.Mesh(geometry, material);

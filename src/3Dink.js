@@ -91,8 +91,8 @@
 	Link.prototype = {
 
 		// 各モデルの設定
-		// リンク先を新しいタブで開くか（'ON' or 'OFF'）のデフォルト値
-		isNewTab: 'OFF',
+		// リンク先を新しいタブで開くか（'_blank' or '_self'）のデフォルト値
+		isNewTab: '_blank',
 
 
 		// オンマウス時の3Dink発光機能（'ON' or 'OFF'）
@@ -194,9 +194,11 @@
 			// intersectObjects に衝突判定対象のメッシュのリストを渡す
 			const objs = ray.intersectObjects(scene.children, true);
 
-			if (objs.length > 0) {
+			// PlaneGeometry は何故か距離が正確に測れないため弾く
+			if (objs.length > 0 && objs[0].object.geometry.type !== "PlaneGeometry") {
 				let dist = objs[0].distance;
 				let itsModel = objs[0].object;
+				console.log(itsModel, dist);
 
 				// 例）衝突対象オブジェクトとの距離が 0 になった場合
 				if (dist <= margin) {
@@ -853,7 +855,7 @@
 							// 左クリックか一本指でタッチ
 							if (e.button === 0 || this.touchLen === 1) {
 
-								if (this.itsModel.userData.linkConfig.isNewTab === 'ON')
+								if (this.itsModel.userData.linkConfig.isNewTab === '_blank')
 									open(this.itsModel.userData.URL);
 
 								else location.href = this.itsModel.userData.URL;

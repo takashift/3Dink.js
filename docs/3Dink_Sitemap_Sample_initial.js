@@ -143,8 +143,7 @@ var plane = new THREE.Mesh(new THREE.PlaneGeometry(10000, 10000, 1, 1),
 );
 
 plane.rotation.x = Math.PI / 2;
-//	plane.position.set(0,0,0);
-
+// plane.position.set(0,0,0);
 
 //影の有効化（地面）          
 //	plane.receiveShadow = true;
@@ -249,9 +248,14 @@ new add_link_cube( scene, katei, 75, 40, 75, 140, 20, 65 );
 
 
 
-var top1 = DDDINK.createBox(50, 50, 50, 140, 200, 0, 'link_texture/link_top.png');
+var top1 = DDDINK.createBox(50, 50, 50, 0, 200, 0, 'link_texture/link_top.png');
 DDDINK.addURL(top1, "./");
+// DDDINK.addURL(top1, "http://abehiroshi.la.coocan.jp/");
 scene.add(top1);
+
+const movingCube = DDDINK.createBox(50, 50, 50, 0, 0, 0);
+scene.add(movingCube);
+
 
 // var about1 = DDDINK.createBox( 50, 50, 50, 140, 200, 70 , 'link_texture/about.png' );
 // scene.add(about1);
@@ -265,7 +269,7 @@ scene.add(top1);
 // top1.userData.linkConfig.setNewTab( 'ON' );
 // console.log(1 ,top1.userData.linkConfig.isNewTab);
 // const shineColor = 0x555555;
-DDDINK.domEvent.setGlobalLinkConfig('OFF', 'ON', '', 0xffffff);
+DDDINK.domEvent.setGlobalLinkConfig('_self', 'ON', 'ON', 0xffffff);
 // top1.userData.linkConfig.setShineColor( shineColor );
 // top1.userData.linkConfig.setShineOnMouse('ON');
 //top1.link.setShineOnTouch('OFF', 'ALL');
@@ -357,7 +361,7 @@ controls.spaceX = 1000;
 controls.spaceZ = 1000;
 
 
-const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
+const isHit = new DDDINK.hitEvent.JudgeXYZ(top1);
 isHit.createHitMargin(11,11,11,11,11,11);
 console.log(isHit.hitMargin);
 
@@ -367,6 +371,8 @@ function render() {
 	const id = requestAnimationFrame(render);
 
 	isHit.judgeHit(id);
+
+	// top1.position.y -= 1;
 	// ここから試し書き
 	// camera に Raycaster を作成して下方向に ray を向ける
 	// const ray = {};

@@ -150,7 +150,7 @@
 
 		// 三軸方向の当たり判定関数を生成するコンストラクタ
 		// 引数は hitMargin はオブジェクトで渡す。それ以外は、"+-" か "+" か "-"。
-		JudgeXYZ: function (obj, positionOfset = undefined, X = "+-", Y = "+-", Z = "+-") {
+		JudgeXYZ: function (obj, positionOfset = undefined, X = '+-', Y = '+-', Z = '+-') {
 			if (positionOfset) {
 				this.obj = new THREE.Vector3(obj.position.x + positionOfset.x, obj.position.y + positionOfset.y, obj.position.z + positionOfset.z);
 			}
@@ -160,17 +160,17 @@
 
 			// obj に Raycaster を作成
 			const rays = {};
-			if (X === "+-" || X === "+")
+			if (X === '+-' || X === '+')
 				rays.Xr = new THREE.Raycaster(this.obj.position, new THREE.Vector3(1, 0, 0));
-			if (X === "+-" || X === "-")
+			if (X === '+-' || X === '-')
 				rays.Xl = new THREE.Raycaster(this.obj.position, new THREE.Vector3(-1, 0, 0));
-			if (Y === "+-" || Y === "+")
+			if (Y === '+-' || Y === '+')
 				rays.Ytop = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 1, 0));
-			if (Y === "+-" || Y === "-")
+			if (Y === '+-' || Y === '-')
 				rays.Ybtm = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, -1, 0));
-			if (Z === "+-" || Z === "+")
+			if (Z === '+-' || Z === '+')
 				rays.Zfw = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 0, 1));
-			if (Z === "+-" || Z === "-")
+			if (Z === '+-' || Z === '-')
 				rays.Zbk = new THREE.Raycaster(this.obj.position, new THREE.Vector3(0, 0, -1));
 
 			// 3Dink だったら、3Dink用のメソッドを実行するように指定

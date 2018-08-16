@@ -1,6 +1,6 @@
 {
   "name": "3dink",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "\"3Dink.js\" is a wrapper library of three.js for WebGL that is enabled to make 3D hyperlinks easily.",
   "main": "build/3Dink.min.js",
   "directories": {

@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/takashift/3Dink.js#readme",
   "dependencies": {
-    "three": "^0.93.0"
+    "three": "^0.95.0"
   },
   "devDependencies": {
     "google-closure-compiler": "^20180506.0.0"

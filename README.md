@@ -1,4 +1,4 @@
-[![Latest NPM release](https://img.shields.io/npm/v/three.svg)](https://www.npmjs.com/package/3dink)
+[![Latest NPM release](https://img.shields.io/npm/v/3Dink.svg)](https://www.npmjs.com/package/3dink)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 
 # 3Dink.js

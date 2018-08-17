@@ -1,3 +1,6 @@
+[![Latest NPM release][npm-badge]](https://www.npmjs.com/package/3dink)
+[![License][license-badge]](./LICENSE)
+
 # 3Dink.js
 This library creates 3D hyperlinks.
 

@@ -36,8 +36,8 @@ else {
 }
 
 
-var width = 800;
-var height = 600;
+const width = 800;
+const height = 600;
 
 
 // スクリーンのサイズ設定
@@ -49,31 +49,29 @@ renderer.setClearColor(new THREE.Color(0xffffff));
 
 
 // シーンを作る
-var scene = new THREE.Scene();
+const scene = new THREE.Scene();
 
 
 //////// 平行投影の場合 ///////////
-var left = width / 2 * -1;
-var right = width / 2;
-var top = height / 2 * -1;
-var bottom = height / 2;
+// const left = width / 2 * -1;
+// const right = width / 2;
+// const top = height / 2 * -1;
+// const bottom = height / 2;
 //////// 透視投影の場合 ///////////
-var fov = 60;
-var aspect = width / height;
+const fov = 60;
+const aspect = width / height;
 /////////// 共通項目 ////////////
-var near = 1;
-var far = 10000;
-
-var view_x = -100;
-var view_y = 300;
-var view_z = 400;
-
+const near = 1;
+const far = 10000;
 
 // カメラオブジェクト(平行投影)を作成( left, right, top, bottom, near, far)
-//	var camera = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
+//	const camera = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
 // カメラオブジェクト(透視投影)を作成(視野角,アス比,near限界,far限界)
-var camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
+const view_x = -100;
+const view_y = 300;
+const view_z = 400;
 
 // カメラの配置位置を設定（x, y, z）
 camera.position.set(view_x, view_y, view_z);
@@ -91,40 +89,41 @@ camera.up.set(0, 1, 0);
 scene.add(camera);
 
 
-/*	// 環境光
+// 環境光
+/*
 AmbientLight = new THREE.AmbientLight("rgb(100,100,100)");  
 scene.add(AmbientLight);
 */
 // ライトオブジェクトを作成(カラー, 光の強さ)
-var directionalLight0 = new THREE.DirectionalLight('#ffffff', 0.85);
+const directionalLight0 = new THREE.DirectionalLight('#ffffff', 0.85);
 // 光源（平行光源、無限遠光源）の座標を設定（x, y, z）
 directionalLight0.position.set(0, 1000, 10).normalize();
 // ライトオブジェクトをシーンに追加
 scene.add(directionalLight0);
 
 // ライトオブジェクトを作成(カラー, 光の強さ)
-var directionalLight1 = new THREE.DirectionalLight('#ffffff', 1);
+const directionalLight1 = new THREE.DirectionalLight('#ffffff', 1);
 // 光源（平行光源、無限遠光源）の座標を設定（x, y, z）
 directionalLight1.position.set(500, 20, 0);
 // ライトオブジェクトをシーンに追加
 scene.add(directionalLight1);
 
 // ライトオブジェクトを作成(カラー, 光の強さ)
-var directionalLight2 = new THREE.DirectionalLight('#ffffff', 1);
+const directionalLight2 = new THREE.DirectionalLight('#ffffff', 1);
 // 光源（平行光源、無限遠光源）の座標を設定（x, y, z）
 directionalLight2.position.set(-500, 20, 0);
 // ライトオブジェクトをシーンに追加
 scene.add(directionalLight2);
 
 // ライトオブジェクトを作成(カラー, 光の強さ)
-var directionalLight3 = new THREE.DirectionalLight('#ffffff', 1);
+const directionalLight3 = new THREE.DirectionalLight('#ffffff', 1);
 // 光源（平行光源、無限遠光源）の座標を設定（x, y, z）
 directionalLight3.position.set(0, 20, 500);
 // ライトオブジェクトをシーンに追加
 scene.add(directionalLight3);
 
 // ライトオブジェクトを作成(カラー, 光の強さ)
-var directionalLight4 = new THREE.DirectionalLight('#ffffff', 1);
+const directionalLight4 = new THREE.DirectionalLight('#ffffff', 1);
 // 光源（平行光源、無限遠光源）の座標を設定（x, y, z）
 directionalLight4.position.set(0, 20, -500);
 // ライトオブジェクトをシーンに追加
@@ -136,7 +135,7 @@ scene.add(directionalLight4);
 
 
 //地面（PlaneGeometry）の生成
-var plane = new THREE.Mesh(new THREE.PlaneGeometry(10000, 10000, 1, 1),
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(10000, 10000, 1, 1),
 	new THREE.MeshLambertMaterial({
 		side: THREE.DoubleSide, color: "rgb(249,249,249)"
 	})
@@ -231,6 +230,11 @@ DDDINK.domEvent.setGlobalLinkConfig('_self', 'ON', 'ON', 0xffffff);
 				});
 */
 DDDINK.readRendererObj(renderer, scene, camera);
+
+const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
+isHit.createHitMargin(25,25,25,25,25,25);
+console.log(isHit.hitMargin);
+
 DDDINK.domEvent.addFnc('Fn', 'A');
 
 
@@ -249,7 +253,7 @@ console.log(about1.link.isShineOnMouseCanvas );
 /*************************************************************/
 
 // Controls3DinkFieldMapsを使うと、カメラの操作をPCやスマホで容易に実現できる。
-var controls = new Controls3DinkFieldMaps(camera, renderer.domElement);
+const controls = new Controls3DinkFieldMaps(camera, renderer.domElement);
 
 // 動かせるカメラの角度（縦方向）の最大値と最小値を指定する。
 // 0 から Math.PI までの間で変更可能（ラジアン）.
@@ -265,11 +269,6 @@ controls.zoomSpeed = 2.0;
 /* 追加　与えた値の + - の範囲で移動可能 */
 controls.spaceX = 1000;
 controls.spaceZ = 1000;
-
-
-const isHit = new DDDINK.hitEvent.JudgeXYZ(camera);
-isHit.createHitMargin(11,11,11,11,11,11);
-console.log(isHit.hitMargin);
 
 
 // 撮影したものをレンダリングする

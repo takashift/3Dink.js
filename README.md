@@ -11,7 +11,7 @@ It can be clicked like the text link, open the context menu and operate.
 Let's try make 3Dinks.
 
 ### reference manual（日本語）
-http://3dink.webcrow.jp/reference/index.html
+http://3dink.web.fc2.com/reference/index.html
 
 ### 3Dink.js Introduction（日本語）
 https://speakerdeck.com/takashift/3dink-dot-js-introduction
